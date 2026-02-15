@@ -1,0 +1,149 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Entregas a Particulares{% endblock %}
+
+{% block content %}
+<div class="min-h-screen bg-linear-60 from-gray-900 via-gray-800 to-black p-6">
+
+    <div class="max-w-6xl mx-auto space-y-6">
+
+        <div>
+            <h1 class="text-3xl font-bold text-gray-100">
+                Entregas a Beneficiarios Particulares
+            </h1>
+            <p class="text-gray-400 mt-1">
+                Historial de entregas realizadas
+            </p>
+        </div>
+
+        <form method="get" class="mb-6 max-w-md">
+            <div class="flex gap-2">
+                <input type="text" name="busqeuda" value="{{ search }}" placeholder="Buscar casa hogar..." class="flex-1 bg-gray-800 border border-gray-700 px-4 py-2 rounded-lg
+               text-white focus:ring-2 focus:ring-pink-600 outline-none">
+                <button class="bg-pink-700 hover:bg-pink-800 px-5 rounded-lg">
+                    Buscar
+                </button>
+            </div>
+        </form>
+
+        <div class="hidden md:block bg-gray-900/90 border border-gray-800 rounded-2xl overflow-x-auto">
+            <table class="min-w-full text-sm text-gray-300">
+                <thead class="bg-gray-800 text-gray-200">
+                    <tr>
+                        <th class="px-4 py-3 text-left">Beneficiario</th>
+                        <th class="px-4 py-3 text-left">Fecha</th>
+                        <th class="px-4 py-3 text-right">Total Ítems</th>
+                        <th class="px-4 py-3 text-center">Reporte</th>
+                    </tr>
+                </thead>
+
+                <tbody class="divide-y divide-gray-800">
+                    {% for r in page_obj %}
+                    <tr class="hover:bg-gray-800/50">
+                        <td class="px-4 py-3">
+                            {{ r.beneficiario__particular__primer_nombre}}  {{ r.beneficiario__particular__primer_apellido }}
+                        </td>
+
+                        <td class="px-4 py-3">
+                            {{ r.fecha_entrega|date:"d/m/Y" }}
+                        </td>
+
+                        <td class="px-4 py-3 text-center font-semibold text-white">
+                            {{ r.total_items }}
+                        </td>
+
+                        <td class="px-4 py-3 text-center">
+                            <a href="{% url 'reportes:entregas_particular_fecha_pdf' r.beneficiario__id r.fecha_entrega %}"
+                                class="px-4 py-1 bg-pink-700 hover:bg-pink-600
+                                      text-white rounded-lg text-xs font-semibold">
+                               📄 Generar PDF
+                            </a>
+                        </td>
+                    </tr>
+                    {% empty %}
+                    <tr>
+                        <td colspan="4" class="px-4 py-6 text-center text-gray-400">
+                            No existen registros
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+
+        <div class="md:hidden space-y-4">
+            {% for r in page_obj %}
+            <div class="bg-gray-900/90 border border-gray-800 rounded-2xl p-4 space-y-2">
+
+                <p class="text-white font-semibold text-lg">
+                    {{ r.beneficiario__nombre }} {{ r.beneficiario__apellido }}
+                </p>
+
+                <p class="text-gray-400 text-sm">
+                    Fecha:
+                    <span class="text-gray-200">
+                        {{ r.fecha_entrega|date:"d/m/Y" }}
+                    </span>
+                </p>
+
+                <p class="text-gray-400 text-sm">
+                    Ítems entregados:
+                    <span class="text-pink-500 font-semibold">
+                        {{ r.total_items }}
+                    </span>
+                </p>
+
+                <div class="pt-2">
+                    <a href="{% url 'reportes:entregas_particular_fecha_pdf' r.beneficiario__id r.fecha_entrega %}"
+                        class="inline-block w-full text-center px-4 py-2
+                              bg-pink-700 hover:bg-pink-800
+                              text-white rounded-xl font-semibold">
+                        📄 Generar PDF
+                    </a>
+                </div>
+            </div>
+            {% empty %}
+            <p class="text-center text-gray-400">
+                No existen registros
+            </p>
+            {% endfor %}
+        </div>
+
+        <!-- PAGINACIÓN -->
+        {% if page_obj.paginator.num_pages > 1 %}
+        <div class="flex justify-center gap-2 pt-6">
+
+            {% if page_obj.has_previous %}
+            <a href="?page={{ page_obj.previous_page_number }}&search={{ search }}" class="px-3 py-1 bg-gray-700 hover:bg-gray-600
+                      text-white rounded-lg">
+                ‹
+            </a>
+            {% endif %}
+
+            {% for num in page_obj.paginator.page_range %}
+            {% if num == page_obj.number %}
+            <span class="px-3 py-1 bg-pink-700 text-white rounded-lg">
+                {{ num }}
+            </span>
+            {% elif num >= page_obj.number|add:"-2" and num <= page_obj.number|add:"2" %} <a
+                href="?page={{ num }}&search={{ search }}" class="px-3 py-1 bg-gray-700 hover:bg-gray-600
+                              text-white rounded-lg">
+                {{ num }}
+                </a>
+                {% endif %}
+                {% endfor %}
+
+                {% if page_obj.has_next %}
+                <a href="?page={{ page_obj.next_page_number }}&search={{ search }}" class="px-3 py-1 bg-gray-700 hover:bg-gray-600
+                      text-white rounded-lg">
+                    ›
+                </a>
+                {% endif %}
+
+        </div>
+        {% endif %}
+
+    </div>
+</div>
+{% endblock %}

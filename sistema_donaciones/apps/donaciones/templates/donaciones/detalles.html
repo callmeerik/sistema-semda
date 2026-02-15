@@ -1,0 +1,169 @@
+{% extends 'base.html' %}
+{% block title %}Detalle de Donación{% endblock %}
+
+{% block content %}
+<div class="min-h-screen bg-linear-60 from-gray-900 via-gray-800 to-black p-6 space-y-8">
+
+  <div class="max-w-6xl mx-auto bg-gray-900/90 border border-pink-600 rounded-2xl p-6 space-y-6">
+
+    <h2 class="text-2xl font-bold text-gray-100">Detalle de Donación</h2>
+
+    <div class="grid md:grid-cols-2 gap-6 text-gray-200">
+
+      <div>
+        <p class="text-sm text-gray-400">Donante</p>
+        <p class="font-semibold">
+          {% if donacion.donante.tipo_donante == 'NATURAL' %}
+            {{ donacion.donante.natural.nombre }} {{ donacion.donante.natural.apellido }}
+          {% else %}
+            {{ donacion.donante.juridico.nombre_representante }}
+            <span class="text-gray-400">– {{ donacion.donante.juridico.razon_social }}</span>
+          {% endif %}
+        </p>
+      </div>
+
+      <div>
+        <p class="text-sm text-gray-400">Tipo de Donante</p>
+        <span class="inline-block px-3 py-1 rounded-full text-sm
+          {% if donacion.donante.tipo_donante == 'NATURAL' %}
+            bg-blue-200 text-blue-900
+          {% else %}
+            bg-purple-300 text-purple-900
+          {% endif %}">
+          {{ donacion.donante.tipo_donante }}
+        </span>
+      </div>
+
+      <div>
+        <p class="text-sm text-gray-400">Correo electrónico</p>
+        <p>
+            {{ donacion.donante.email }}
+        </p>
+      </div>
+
+      <div>
+        <p class="text-sm text-gray-400">Fecha de donación</p>
+        <p>{{ donacion.fecha_donacion }}</p>
+      </div>
+
+      <div>
+        <p class="text-sm text-gray-400">Observaciones</p>
+        <p>{{ donacion.observaciones|default:"—" }}</p>
+      </div>
+
+      <div>
+        <a href="{% url 'donaciones:agregar_item' donacion.id %}"
+           class="flex-1 bg-pink-600 hover:bg-pink-800 text-white py-2 px-3 w-4 rounded text-center text-sm">
+          Agregar Items
+        </a>
+      </div>
+
+    </div>
+  </div>
+
+
+  <div class="hidden md:block max-w-6xl mx-auto bg-white/5 backdrop-blur rounded-2xl p-6">
+
+    <h3 class="text-xl text-white font-semibold mb-4">Items Donados</h3>
+    {% for message in messages %}
+    {% if "error_edicion_item" in message.tags %}
+        <div class="p-3 rounded mb-3 bg-yellow-400/60 border-2 border-yellow-900 text-yellow-950 font-bold">
+            <p>{{ message }}</p>
+        </div>
+    {% endif %}
+    {% endfor %}
+    <table class="min-w-full border-separate border-spacing-y-3">
+      <thead>
+        <tr class="text-white text-sm">
+          <th class="px-4 py-2">Categoría</th>
+          <th class="px-4 py-2">Descripción</th>
+          <th class="px-4 py-2">Cantidad</th>
+          <th class="px-4 py-2">Disponible</th>
+          <th class="px-4 py-2">Vencimiento</th>
+          <th class="px-4 py-2">Unidad</th>
+          <th class="px-4 py-2">Acciones</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for item in items %}
+        <tr class="bg-white/10 text-white rounded-xl text-center">
+          <td class="px-4 py-3">{{ item.categoria.nombre }}</td>
+          <td class="px-4 py-3">{{ item.descripcion }}</td>
+          <td class="px-4 py-3">{{ item.cantidad_total }}</td>
+          <td class="px-4 py-3">{{ item.cantidad_disponible }}</td>
+          <td class="px-4 py-3">
+            {% if item.fecha_vencimiento %}
+                {{item.fecha_vencimiento}}
+            {% else %}
+                -
+            {% endif %}
+          </td>
+          <td class="px-4 py-3">{{ item.unidad_medida|title }}</td>
+          <td class="flex gap-2 px-4 py-3 text-center space-x-2">
+            <a href="{% url 'donaciones:editar_item' item.id %}"
+               class="bg-violet-500 hover:bg-violet-600 text-white px-3 py-1 rounded text-sm">
+              Editar
+            </a>
+
+            <a href="{% url 'donaciones:entregar' item.id %}"
+               class="bg-green-600 hover:bg-green-700 text-white px-3 py-1 rounded text-sm">
+              Entregar
+            </a>
+          </td>
+        </tr>
+        {% empty %}
+        <tr>
+          <td colspan="5" class="text-center py-6 text-gray-400">
+            No hay items registrados
+          </td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+
+  <div class="md:hidden flex flex-wrap gap-4 max-w-6xl mx-auto">
+    {% for item in items %}
+    <div class="w-full bg-white/5 border border-pink-600 rounded-xl p-4 space-y-2 text-gray-100">
+        <p class="font-semibold">{{ item.descripcion }}</p>
+        <p class="text-sm">Categoría: {{ item.categoria.nombre }}</p>
+        <p class="text-sm">Cantidad: {{ item.cantidad }}</p>
+        <p class="text-sm">Disponible: {{ item.cantidad_disponible }}</p>
+        <p class="text-sm">Unidad: {{ item.unidad_medida }}</p>
+        <div class="flex gap-2 px-4 py-3 text-center space-x-2">
+            <a href="{% url 'donaciones:editar_item' item.id %}"
+               class="bg-violet-500 hover:bg-violet-600 text-white px-3 py-1 rounded text-sm">
+              Editar
+            </a>
+
+            <a href="{% url 'donaciones:entregar' item.id %}"
+               class="bg-green-600 hover:bg-green-700 text-white px-3 py-1 rounded text-sm">
+              Entregar
+            </a>
+        </div>
+    </div>
+    {% empty %}
+    <p class="text-gray-400">No hay items registrados</p>
+    {% endfor %}
+  </div>
+
+  <!-- PAGINACIÓN -->
+  {% if page_obj.has_other_pages %}
+  <div class="flex justify-center mt-6">
+    <nav class="flex gap-2">
+      {% for num in page_obj.paginator.page_range %}
+        {% if page_obj.number == num %}
+          <span class="px-4 py-2 bg-pink-700 text-white rounded-lg">{{ num }}</span>
+        {% else %}
+          <a href="?page={{ num }}"
+             class="px-4 py-2 bg-gray-800 text-gray-200 rounded-lg hover:bg-gray-700">
+            {{ num }}
+          </a>
+        {% endif %}
+      {% endfor %}
+    </nav>
+  </div>
+  {% endif %}
+
+</div>
+{% endblock %}

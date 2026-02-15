@@ -1,0 +1,65 @@
+{% extends 'base.html' %}
+{% block title %}Crear Donación{% endblock %}
+
+{% block content %}
+<div class="min-h-screen bg-linear-60 from-gray-900 via-gray-800 to-black p-8">
+  <div class="max-w-3xl mx-auto bg-gray-900 p-8 rounded-xl border border-gray-800 space-y-6">
+
+    <h2 class="text-2xl font-bold text-gray-100">Crear Donación</h2>
+
+    <form method="post" class="space-y-6">
+      {% csrf_token %}
+
+      <!-- DONANTE -->
+      <div>
+        <label class="text-gray-300 text-sm">Donante *</label>
+        <select name="donante"
+          class="w-full bg-gray-800 text-white px-4 py-2 rounded focus:ring-2 focus:ring-pink-600">
+          <option value="">Seleccione un donante</option>
+          {% for donante in donantes %}
+            <option value="{{ donante.id }}"
+              {% if data.donante == donante.id|stringformat:"s" %}selected{% endif %}>
+              {% if donante.tipo_donante == 'NATURAL' %}
+                {{ donante.natural.nombre }} {{ donante.natural.apellido }}
+              {% else %}
+                {{ donante.juridico.razon_social }}
+              {% endif %}
+            </option>
+          {% endfor %}
+        </select>
+        {% if errores.donante %}
+          <p class="text-red-400 text-sm mt-1">{{ errores.donante }}</p>
+        {% endif %}
+      </div>
+
+      <div>
+        <label class="text-gray-300 text-sm">Fecha de donación *</label>
+        <input type="date" name="fecha_donacion"
+          value="{{ data.fecha_donacion }}"
+          class="w-full bg-gray-800 text-white px-4 py-2 rounded focus:ring-2 focus:ring-pink-600">
+        {% if errores.fecha_donacion %}
+          <p class="text-red-800 text-lg mt-1">{{ errores.fecha_donacion }}</p>
+        {% endif %}
+      </div>
+
+      <!-- DESCRIPCIÓN -->
+      <div>
+        <label class="text-gray-300 text-sm">Descripción</label>
+        <textarea name="descripcion"
+          class="w-full bg-gray-800 text-white px-4 py-2 rounded resize-none"
+          rows="4">{{ data.descripcion }}</textarea>
+      </div>
+
+      <!-- BOTÓN -->
+      <div class="flex justify-end">
+        <button
+          class="bg-pink-700 hover:bg-pink-800 text-white px-6 py-2 rounded">
+          Guardar Donación
+        </button>
+      </div>
+
+    </form>
+
+  </div>
+</div>
+{% endblock %}

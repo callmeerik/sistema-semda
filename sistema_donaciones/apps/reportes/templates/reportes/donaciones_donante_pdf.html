@@ -1,0 +1,269 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Reporte de Donaciones</title>
+
+    <style>
+        /* ================= CONFIGURACIÓN DE PÁGINA ================= */
+        @page {
+            size: letter;
+            margin-top: 55px;
+            margin-bottom: 70px;
+            margin-left: 2cm;
+            margin-right: 2cm;
+        }
+
+        body {
+            font-family: Arial, Helvetica, sans-serif;
+            font-size: 12px;
+            color: #111;
+            position: relative;
+        }
+
+        body::before {
+            content: "";
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+
+            background-image: url("static/images/logo2.png");
+            background-repeat: no-repeat;
+            background-position: center;
+            background-size: 88%;
+            opacity: 0.06;        
+            z-index: -1;          
+        }
+
+
+        /* ================= HEADER ================= */
+        .header {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 55px;
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-end;
+            border-bottom: 2px solid #fb7ce0;
+            padding-bottom: 4px;
+        }
+
+        .logo {
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start;
+        }
+
+        .logo img {
+            width: 70px;
+            max-height: 50px;
+            object-fit: contain;
+        }
+
+        .logo p {
+            margin-top: 2px;
+            font-size: 6px;
+            color: rgb(244, 23, 148);
+            line-height: 1;
+            white-space: nowrap;
+        }
+
+        .titulo {
+            text-align: right;
+        }
+
+        .titulo h1 {
+            font-size: 16px;
+            margin: 0;
+        }
+
+        .titulo h3 {
+            font-size: 12px;
+            margin: 2px 0 0 0;
+            font-weight: normal;
+        }
+
+        /* ================= CONTENIDO ================= */
+        .contenido {
+            margin-top: 75px;
+            margin-bottom: 85px;
+        }
+
+        .info {
+            margin-bottom: 15px;
+        }
+
+        .info p {
+            margin: 3px 0;
+        }
+
+        .dato {
+            font-weight: bold;
+        }
+
+        h2 {
+            font-size: 14px;
+            margin: 18px 0 8px 0;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 10px;
+        }
+
+        th,
+        td {
+            border: 1px solid #444;
+            padding: 6px;
+            font-size: 11px;
+        }
+
+        th {
+            background-color: #eee;
+            text-align: left;
+        }
+
+        .text-center {
+            text-align: center;
+        }
+
+        /* ================= FIRMAS ================= */
+        .firmas {
+            margin-top: 50px;
+            display: flex;
+            justify-content: space-between;
+        }
+
+        .firma {
+            width: 40%;
+            text-align: center;
+        }
+
+        .firma-linea {
+            border-top: 1px solid #000;
+            margin-top: 40px;
+            padding-top: 5px;
+            font-size: 11px;
+        }
+
+        /* ================= FOOTER ================= */
+        .footer {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            height: 70px;
+            border-top: 2px solid rgb(241, 105, 180);
+            text-align: center;
+            font-size: 9px;
+            color: #fb0ca7;
+            padding-top: 4px;
+        }
+
+        .footer-title {
+            font-weight: bold;
+            text-transform: uppercase;
+        }
+
+        .web-page {
+            font-weight: bold;
+        }
+    </style>
+</head>
+
+<body>
+
+<!-- HEADER -->
+<header class="header">
+    <div class="logo">
+        {% if logo_ruta %}
+            <img src="file:///{{ logo_ruta }}" alt="Logo Fundación SEMDA">
+        {% endif %}
+        <p>FUNDACIÓN SEMILLAS DE AMOR</p>
+    </div>
+    <div class="titulo">
+        <h1>Reporte de Donaciones</h1>
+        <h3>{{ fecha|date:"d/m/Y" }}</h3>
+    </div>
+</header>
+
+<!-- CONTENIDO -->
+<div class="contenido">
+
+    <h2>Datos del Donante</h2>
+
+    <div class="info">
+        <p>
+            <span class="dato">Nombre:</span>
+            {{ donante.nombre_donante }}
+        </p>
+
+        <p>
+            {% if donante.tipo_donante == 'NATURAL' %}
+                <span class="dato">Cédula:</span> {{ donante.natural.cedula }}
+            {% else %}
+                <span class="dato">RUC:</span> {{ donante.juridico.ruc }}
+            {% endif %}
+        </p>
+    
+    </div>
+
+    <h2>Detalle de Donación</h2>
+
+    <table>
+        <thead>
+            <tr>
+                <th style="width: 5%;">#</th>
+                <th style="width: 45%;">Artículo Donado</th>
+                <th style="width: 20%;">Cantidad</th>
+                <th style="width: 30%;">Unidad de Medida</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for d in donaciones %}
+            {% for item in d.items.all %}
+            <tr>
+                <td class="text-center">{{ forloop.counter }}</td>
+                <td>{{ item.descripcion|default:"—" }}</td>
+                <td>{{item.cantidad_total }}</td>
+                <td>{{ item.unidad_medida }}</td>
+            </tr>
+            {% endfor %}
+            {% endfor %}
+        </tbody>
+    </table>
+
+    <div class="firmas">
+        <div class="firma">
+            <div class="firma-linea">Donante</div>
+        </div>
+
+        <div class="firma">
+            <div class="firma-linea">Representante Fundación</div>
+        </div>
+    </div>
+
+</div>
+
+ <footer class="footer">
+        <p class="direccion">
+            <span class="footer-title">dirección:</span>
+            río calvas n oe-12-109, quito - ecuador
+            <span class="footer-title"> • teléfono:</span>
+            (+593) 99 542 8764
+        </p>
+        <p>
+            <span class="footer-title">email:</span>
+            correo@semdaecuador.org
+        </p>
+        <p class="web-page">
+            www.semdaecuador.org
+        </p>
+    </footer>
+</body>
+</html>

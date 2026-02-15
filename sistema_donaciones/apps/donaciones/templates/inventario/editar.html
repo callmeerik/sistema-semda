@@ -1,0 +1,130 @@
+{% extends "base.html" %}
+
+{% block title %}Editar Item{% endblock %}
+
+{% block content %}
+<div class="min-h-screen bg-linear-60 from-gray-900 via-gray-800 to-black p-6">
+  <div class="max-w-3xl mx-auto space-y-8">
+
+    <div class="flex justify-between items-center">
+      <h1 class="text-3xl font-bold text-gray-100">Editar Item</h1>
+
+      <a href="{% url 'donaciones:detalle' item.id %}"
+         class="px-4 py-2 bg-gray-700 hover:bg-gray-600 text-white rounded-lg">
+        ← Volver
+      </a>
+    </div>
+
+    <!-- FORM -->
+    <form method="post"
+          class="bg-gray-900/90 border border-gray-800 rounded-2xl p-6 space-y-6">
+      {% csrf_token %}
+
+      <!-- DESCRIPCIÓN -->
+      <div>
+        <label class="text-gray-300 text-sm">Descripción</label>
+        <input type="text" name="descripcion"
+               value="{{ item.descripcion }}"
+               class="w-full bg-gray-800 text-white px-4 py-3 rounded-xl
+                      focus:ring-2 focus:ring-pink-600 outline-none">
+        {% if error.descripcion %}
+          <p class="text-red-400 text-sm mt-1">{{ error.descripcion }}</p>
+        {% endif %}
+      </div>
+
+      <!-- CANTIDAD / UNIDAD -->
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+
+        <div>
+          <label class="text-gray-300 text-sm">Cantidad total</label>
+          <input type="number" name="cantidad_total" min="1"
+                 value="{{ item.cantidad_total }}"
+                 class="w-full bg-gray-800 text-white px-4 py-3 rounded-xl
+                        focus:ring-2 focus:ring-pink-600 outline-none">
+          {% if error.cantidad_total %}
+            <p class="text-red-400 text-sm mt-1">{{ error.cantidad_total }}</p>
+          {% endif %}
+        </div>
+
+        <div>
+          <label class="text-gray-300 text-sm">Unidad de medida</label>
+          <select name="unidad_medida" class="w-full bg-gray-800 text-white px-4 py-2 rounded-xl
+                 focus:outline-none focus:ring-2 focus:ring-pink-600 transition">
+                    <option value="{{item.unidad_medida}}">{{item.unidad_medida}}</option>
+                    <option value="UNIDAD">Unidades</option>
+                    <option value="KG">Kilogramos</option>
+                    <option value="LITRO">Litros</option>
+                    <option value="CAJA">Cajas</option>
+            </select>
+
+      </div>
+
+      <!-- CATEGORÍA / VENCIMIENTO -->
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+
+        <div>
+          <label class="text-gray-300 text-sm">Categoría</label>
+          <select name="categoria"
+                  class="w-full bg-gray-800 text-white px-4 py-3 rounded-xl">
+            <option value="">Seleccione</option>
+            {% for c in categorias %}
+              <option value="{{ c.id }}"
+                {% if c.id == item.categoria.id %}selected{% endif %}>
+                {{ c.nombre }}
+              </option>
+            {% endfor %}
+          </select>
+          {% if error.categoria %}
+            <p class="text-red-400 text-sm mt-1">{{ error.categoria }}</p>
+          {% endif %}
+        </div>
+
+        <div>
+          <label class="text-gray-300 text-sm">Fecha de vencimiento</label>
+          <input type="date" name="fecha_vencimiento"
+                 value="{{ item.fecha_vencimiento|date:'Y-m-d' }}"
+                 class="w-full bg-gray-800 text-white px-4 py-3 rounded-xl">
+        </div>
+
+      </div>
+
+      <!-- INFO SOLO LECTURA -->
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-6 pt-4 border-t border-gray-700">
+
+        <div>
+          <p class="text-gray-400 text-sm">Cantidad disponible</p>
+          <p class="text-gray-200 font-semibold">
+            {{ item.cantidad_disponible }}
+          </p>
+        </div>
+
+        <div>
+          <p class="text-gray-400 text-sm">Estado</p>
+          <p class="font-semibold
+            {% if item.estado == 'DISPONIBLE' %}text-green-400
+            {% elif item.estado == 'AGOTADO' %}text-yellow-400
+            {% else %}text-red-400{% endif %}">
+            {{ item.get_estado_display }}
+          </p>
+        </div>
+
+      </div>
+
+      <!-- BOTONES -->
+      <div class="flex justify-end gap-4 pt-6">
+        <a href="{% url 'donaciones:detalle' item.donacion.id %}"
+           class="px-6 py-2 bg-gray-600 hover:bg-gray-700 text-white rounded-xl">
+          Cancelar
+        </a>
+
+        <button type="submit"
+                class="px-6 py-2 bg-pink-700 hover:bg-pink-800 text-white rounded-xl">
+          Guardar cambios
+        </button>
+      </div>
+
+    </form>
+
+  </div>
+</div>
+{% endblock %}

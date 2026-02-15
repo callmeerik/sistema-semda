@@ -1,0 +1,195 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Editar Beneficiario{% endblock %}
+
+{% block content %}
+<div class="min-h-screen bg-gray-900 p-6">
+
+    <div class="max-w-4xl mx-auto">
+
+        <h1 class="text-3xl font-bold text-white text-center mb-8">
+            Editar Beneficiario
+        </h1>
+
+        <form method="post" class="bg-gray-800 rounded-2xl p-6 space-y-6">
+            {% csrf_token %}
+
+            <!-- Tipo (solo visual) -->
+            <div>
+                <label class="text-gray-300 text-sm">Tipo de Beneficiario</label>
+                <input type="text" 
+                       value="{{ beneficiario.get_tipo_display }}" 
+                       disabled
+                       class="w-full bg-gray-700 text-gray-400 px-4 py-2 rounded-xl cursor-not-allowed">
+            </div>
+
+            <!-- ========================= -->
+            <!-- CAMPOS PARA PARTICULAR -->
+            <!-- ========================= -->
+            {% if beneficiario.tipo == 'PARTICULAR' %}
+
+            <div class="grid md:grid-cols-2 gap-4">
+                <div>
+                    <label class="text-gray-300 text-sm">Primer Nombre</label>
+                    <input name="primer_nombre"
+                           value="{{ beneficiario.particular.primer_nombre }}"
+                           required
+                           class="w-full bg-gray-900 text-white px-4 py-2 rounded-xl">
+                </div>
+
+                <div>
+                    <label class="text-gray-300 text-sm">Segundo Nombre</label>
+                    <input name="segundo_nombre"
+                           value="{{ beneficiario.particular.segundo_nombre }}"
+                           class="w-full bg-gray-900 text-white px-4 py-2 rounded-xl">
+                </div>
+
+               
+            </div>
+
+            <div class="grid md:grid-cols-2 gap-4">
+                <div>
+                    <label class="text-gray-300 text-sm">Primer Apellido</label>
+                    <input name="primer_apellido"
+                           value="{{ beneficiario.particular.primer_apellido }}"
+                           required
+                           class="w-full bg-gray-900 text-white px-4 py-2 rounded-xl">
+                </div>
+
+                <div>
+                    <label class="text-gray-300 text-sm">Segundo Apellido</label>
+                    <input name="segundo_apellido"
+                           value="{{ beneficiario.particular.segundo_apellido }}"
+                           class="w-full bg-gray-900 text-white px-4 py-2 rounded-xl">
+                </div>
+            </div>
+
+            <div class="grid md:grid-cols-2 gap-4">
+                <div>
+                    <label class="text-gray-300 text-sm">Cédula</label>
+                    <input name="cedula"
+                           value="{{ beneficiario.particular.cedula }}"
+                           required
+                           class="w-full bg-gray-900 text-white px-4 py-2 rounded-xl">
+                </div>
+
+                <div>
+                    <label class="text-gray-300 text-sm">Edad</label>
+                    <input type="number"
+                           name="edad"
+                           value="{{ beneficiario.particular.edad }}"
+                           required
+                           class="w-full bg-gray-900 text-white px-4 py-2 rounded-xl">
+                </div>
+            </div>
+
+            <div>
+                <label class="text-gray-300 text-sm">Sexo</label>
+                <select name="sexo"
+                        class="w-full bg-gray-900 text-white px-4 py-2 rounded-xl">
+                    <option value="M" {% if beneficiario.particular.sexo == 'M' %}selected{% endif %}>Masculino</option>
+                    <option value="F" {% if beneficiario.particular.sexo == 'F' %}selected{% endif %}>Femenino</option>
+                </select>
+            </div>
+
+            {% endif %}
+
+
+            <!-- ========================= -->
+            <!-- CAMPOS PARA INSTITUCIONAL -->
+            <!-- ========================= -->
+            {% if beneficiario.tipo == 'INSTITUCIONAL' %}
+
+            <div>
+                <label class="text-gray-300 text-sm">Nombre de la Institución</label>
+                <input name="nombre_institucion"
+                       value="{{ beneficiario.institucional.nombre_institucion }}"
+                       required
+                       class="w-full bg-gray-900 text-white px-4 py-2 rounded-xl">
+            </div>
+
+            <div class="grid md:grid-cols-2 gap-4">
+                <div>
+                    <label class="text-gray-300 text-sm">Tipo de Institución</label>
+                    <select name="tipo_institucion"
+                            class="w-full bg-gray-900 text-white px-4 py-2 rounded-xl">
+                        <option value="CASA_HOGAR" {% if beneficiario.institucional.tipo_institucion == 'CASA_HOGAR' %}selected{% endif %}>Casa Hogar</option>
+                        <option value="FUNDACION" {% if beneficiario.institucional.tipo_institucion == 'FUNDACION' %}selected{% endif %}>Fundación</option>
+                        <option value="ASOCIACION" {% if beneficiario.institucional.tipo_institucion == 'ASOCIACION' %}selected{% endif %}>Asociación</option>
+                        <option value="OTRO" {% if beneficiario.institucional.tipo_institucion == 'OTRO' %}selected{% endif %}>Otro</option>
+                    </select>
+                </div>
+
+                <div>
+                    <label class="text-gray-300 text-sm">RUC</label>
+                    <input name="ruc"
+                           value="{{ beneficiario.institucional.ruc }}"
+                           required
+                           class="w-full bg-gray-900 text-white px-4 py-2 rounded-xl">
+                </div>
+            </div>
+
+            <div class="grid md:grid-cols-2 gap-4">
+                <div>
+                    <label class="text-gray-300 text-sm">Nombre Representante</label>
+                    <input name="nombre_representante"
+                           value="{{ beneficiario.institucional.nombre_representante }}"
+                           required
+                           class="w-full bg-gray-900 text-white px-4 py-2 rounded-xl">
+                </div>
+
+                <div>
+                    <label class="text-gray-300 text-sm">Apellido Representante</label>
+                    <input name="apellido_representante"
+                           value="{{ beneficiario.institucional.apellido_representante }}"
+                           required
+                           class="w-full bg-gray-900 text-white px-4 py-2 rounded-xl">
+                </div>
+            </div>
+
+            {% endif %}
+
+            <!-- DATOS GENERALES -->
+            <hr class="border-gray-600">
+
+            <div class="grid md:grid-cols-3 gap-4">
+                <div>
+                    <label class="text-gray-300 text-sm">Teléfono</label>
+                    <input name="telefono"
+                           value="{{ beneficiario.telefono }}"
+                           class="w-full bg-gray-900 text-white px-4 py-2 rounded-xl">
+                </div>
+
+                <div>
+                    <label class="text-gray-300 text-sm">Dirección</label>
+                    <input name="direccion"
+                           value="{{ beneficiario.direccion }}"
+                           class="w-full bg-gray-900 text-white px-4 py-2 rounded-xl">
+                </div>
+
+                 <div>
+                    <label class="text-gray-300 text-sm">Email</label>
+                    <input name="email"
+                        value="{{ beneficiario.email|default:"" }}"
+                        class="w-full bg-gray-900 text-white px-4 py-2 rounded-xl focus:ring-2 focus:ring-pink-600">
+                </div>
+            </div>
+
+            <div class="flex justify-end gap-3 pt-4">
+                <a href="{% url 'beneficiarios:beneficiario_index' %}"
+                   class="px-5 py-2 bg-gray-600 hover:bg-gray-500 text-white rounded-xl">
+                    Cancelar
+                </a>
+
+                <button
+                    class="px-5 py-2 bg-pink-700 hover:bg-pink-800 text-white rounded-xl">
+                    Guardar cambios
+                </button>
+            </div>
+
+        </form>
+
+    </div>
+</div>
+{% endblock %}

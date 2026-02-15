@@ -1,0 +1,157 @@
+{% extends 'base.html' %}
+
+{% block title %}Detalle de Entrega{% endblock %}
+
+{% block content %}
+<div class="min-h-screen bg-linear-60 from-gray-900 via-gray-800 to-black p-4 md:p-6">
+  <div class="max-w-4xl mx-auto space-y-6">
+
+    <!-- HEADER -->
+    <div class="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-4">
+      <h1 class="text-2xl md:text-3xl font-bold text-gray-100">
+        Detalle de Entrega
+      </h1>
+
+      <a href="{% url 'donaciones:entregas' %}"
+         class="inline-flex items-center gap-2 px-4 py-2 bg-gray-700 hover:bg-gray-600 text-white rounded-lg transition">
+        ← Volver
+      </a>
+    </div>
+
+    <!-- Distinccion de estado de entrega -->
+    <div class="bg-gray-900/90 border rounded-2xl p-5
+      {% if entrega.estado == 'REGISTRADA' %}
+        border-blue-700
+      {% elif entrega.estado == 'REALIZADA' %}
+        border-green-700
+      {% else %}
+        border-red-700
+      {% endif %}
+    ">
+      {% if entrega.estado == 'REGISTRADA' %}
+        <span class="text-blue-400 font-semibold text-lg">
+          Entrega Registrada (Pendiente de entrega física)
+        </span>
+
+      {% elif entrega.estado == 'REALIZADA' %}
+        <span class="text-green-400 font-semibold text-lg">
+          Entrega Realizada
+        </span>
+
+      {% elif entrega.estado == 'ANULADA' %}
+        <span class="text-red-400 font-semibold text-lg">
+          Entrega Anulada
+        </span>
+
+        {% if anulacion %}
+        <div class="mt-4 bg-red-900/30 border border-red-700 rounded-xl p-4 space-y-2">
+          <p class="text-red-300 font-semibold">
+            Motivo de anulación
+          </p>
+          <p class="text-gray-200">
+            {{ anulacion.motivo }}
+          </p>
+
+          <div class="text-sm text-gray-400">
+            Anulada por:
+            <span class="text-gray-200">
+              {{ anulacion.anulada_por.get_full_name|default:anulacion.anulada_por.username }}
+            </span>
+            · {{ anulacion.fecha_anulacion|date:"d/m/Y H:i" }}
+          </div>
+        </div>
+        {% endif %}
+      {% endif %}
+    </div>
+
+    <!-- info de cada entrega -->
+    <div class="bg-gray-900/90 border rounded-2xl p-6 space-y-6">
+      <h2 class="text-lg md:text-xl text-white font-bold">
+        Información de la Entrega
+      </h2>
+
+      <div class="grid grid-cols-1 sm:grid-cols-2 gap-5">
+
+        <div>
+          <p class="text-gray-400 text-sm">Ítem entregado</p>
+          <p class="text-white font-semibold">
+            {{ entrega.item.descripcion }}
+          </p>
+        </div>
+
+        <div>
+          <p class="text-gray-400 text-sm">Cantidad entregada</p>
+          <p class="text-gray-200">
+            {{ entrega.cantidad_entregada }} {{ entrega.item.unidad_medida }}
+          </p>
+        </div>
+
+        <div>
+          <p class="text-gray-400 text-sm">Fecha programada</p>
+          <p class="text-gray-200">
+            {{ entrega.fecha_entrega|date:"d/m/Y" }}
+          </p>
+        </div>
+
+        <div>
+          <p class="text-gray-400 text-sm">Registrada por</p>
+          <p class="text-gray-200">
+            {{ entrega.registrada_por.get_full_name|default:entrega.registrada_por.username }}
+          </p>
+        </div>
+
+        {% if entrega.estado == 'REALIZADA' %}
+        <div class="sm:col-span-2">
+          <p class="text-gray-400 text-sm">Recibido por</p>
+          <p class="text-green-300 font-semibold">
+            {{ entrega.recibida_por }}
+          </p>
+        </div>
+        {% endif %}
+
+      </div>
+    </div>
+
+    <!-- info del beneficiairo -->
+    <div class="bg-gray-900/90 border border-gray-800 rounded-2xl p-6 space-y-6">
+      <h2 class="text-lg md:text-xl text-white font-bold">
+        Beneficiario
+      </h2>
+
+      <div class="grid grid-cols-1 sm:grid-cols-2 gap-5">
+
+        <div>
+          <p class="text-gray-400 text-sm">Nombre</p>
+          <p class="text-white font-semibold">
+            {% if beneficiario.tipo == "INSTITUCIONAL" %}
+                {{ datos_institucional.nombre_institucion }} 
+            {% else %}
+                {{ datos_particular.primer_nombre }} {{ datos_particular.primer_apellido }}
+            {% endif %}
+          </p>
+        </div>
+
+        <div>
+          <p class="text-gray-400 text-sm">Edad</p>
+          <p class="text-amber-200">
+            {{ beneficiario.edad|default:"—" }}
+          </p>
+        </div>
+
+        <div>
+          <p class="text-gray-400 text-sm">Tipo</p>
+          <p class="text-gray-200">
+            {% if beneficiairo.tipo == 'INSTITUCIONAL' %}
+              {{datos_institucional.tipo_institucion}}
+            {% else %}
+              Persona Natural
+            {% endif %}
+          </p>
+        </div>
+
+      </div>
+    </div>
+
+  </div>
+</div>
+{% endblock %}

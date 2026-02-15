@@ -1,0 +1,174 @@
+{% extends "base.html" %}
+
+{% block title %}Crear Usuario{% endblock %}
+
+{% block content %}
+<div class="min-h-screen bg-gray-900 text-white p-6">
+
+  <!-- ================== HEADER ================== -->
+  <div class="flex flex-col md:flex-row md:items-center md:justify-between mb-6 gap-4">
+    <h1 class="text-2xl font-bold text-pink-500">
+      Crear Usuario
+    </h1>
+
+    <a href="{% url 'usuarios:index' %}"
+       class="bg-gray-700 hover:bg-gray-600 px-4 py-2 rounded-lg text-sm text-center">
+      Volver
+    </a>
+  </div>
+
+  <!-- ================== FORM ================== -->
+  <form method="post"
+        class="bg-gray-800 border border-pink-700 rounded-xl p-6">
+    {% csrf_token %}
+
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+
+      <!-- USERNAME -->
+      <div>
+        <label class="block text-sm mb-1">Usuario *</label>
+        <input type="text"
+               name="username"
+               value="{{ data.username|default:'' }}"
+               class="w-full px-3 py-2 rounded bg-gray-900 border border-gray-600 focus:outline-none focus:border-pink-500">
+        {% if errores.username %}
+          <p class="text-red-400 text-sm mt-1">{{ errores.username }}</p>
+        {% endif %}
+      </div>
+
+      <!-- ROL -->
+      <div>
+        <label class="block text-sm mb-1">Rol *</label>
+        <select name="rol"
+                class="w-full px-3 py-2 rounded bg-gray-900 border border-gray-600 focus:outline-none focus:border-pink-500">
+          <option value="">Seleccione</option>
+          <option value="ADMINISTRADOR" {% if data.rol == 'ADMINISTRADOR' %}selected{% endif %}>
+            Administrador
+          </option>
+          <option value="ASISTENTE" {% if data.rol == 'ASISTENTE' %}selected{% endif %}>
+            Asistente
+          </option>
+        </select>
+        {% if errores.rol %}
+          <p class="text-red-400 text-sm mt-1">{{ errores.rol }}</p>
+        {% endif %}
+      </div>
+
+      <!-- PRIMER NOMBRE -->
+      <div>
+        <label class="block text-sm mb-1">Primer nombre *</label>
+        <input type="text"
+               name="primer_nombre"
+               value="{{ data.primer_nombre|default:'' }}"
+               class="w-full px-3 py-2 rounded bg-gray-900 border border-gray-600">
+        {% if errores.primer_nombre %}
+          <p class="text-red-400 text-sm mt-1">{{ errores.primer_nombre }}</p>
+        {% endif %}
+      </div>
+
+      <!-- SEGUNDO NOMBRE -->
+      <div>
+        <label class="block text-sm mb-1">Segundo nombre</label>
+        <input type="text"
+               name="segundo_nombre"
+               value="{{ data.segundo_nombre|default:'' }}"
+               class="w-full px-3 py-2 rounded bg-gray-900 border border-gray-600">
+      </div>
+
+      <!-- PRIMER APELLIDO -->
+      <div>
+        <label class="block text-sm mb-1">Primer apellido *</label>
+        <input type="text"
+               name="primer_apellido"
+               value="{{ data.primer_apellido|default:'' }}"
+               class="w-full px-3 py-2 rounded bg-gray-900 border border-gray-600">
+        {% if errores.primer_apellido %}
+          <p class="text-red-400 text-sm mt-1">{{ errores.primer_apellido }}</p>
+        {% endif %}
+      </div>
+
+      <!-- SEGUNDO APELLIDO -->
+      <div>
+        <label class="block text-sm mb-1">Segundo apellido</label>
+        <input type="text"
+               name="segundo_apellido"
+               value="{{ data.segundo_apellido|default:'' }}"
+               class="w-full px-3 py-2 rounded bg-gray-900 border border-gray-600">
+      </div>
+
+      <!-- CEDULA -->
+      <div>
+        <label class="block text-sm mb-1">Cédula *</label>
+        <input type="text"
+               name="cedula"
+               value="{{ data.cedula|default:'' }}"
+               class="w-full px-3 py-2 rounded bg-gray-900 border border-gray-600">
+        {% if errores.cedula %}
+          <p class="text-red-400 text-sm mt-1">{{ errores.cedula }}</p>
+        {% endif %}
+      </div>
+
+      <!-- TELEFONO -->
+      <div>
+        <label class="block text-sm mb-1">Teléfono *</label>
+        <input type="text"
+               name="telefono"
+               value="{{ data.telefono|default:'' }}"
+               class="w-full px-3 py-2 rounded bg-gray-900 border border-gray-600">
+        {% if errores.telefono %}
+          <p class="text-red-400 text-sm mt-1">{{ errores.telefono }}</p>
+        {% endif %}
+      </div>
+
+      <!-- EMAIL -->
+      <div>
+        <label class="block text-sm mb-1">Correo *</label>
+        <input type="email"
+               name="email"
+               value="{{ data.email|default:'' }}"
+               class="w-full px-3 py-2 rounded bg-gray-900 border border-gray-600">
+        {% if errores.email %}
+          <p class="text-red-400 text-sm mt-1">{{ errores.email }}</p>
+        {% endif %}
+      </div>
+
+      <!-- PASSWORD -->
+      <div>
+        <label class="block text-sm mb-1">Contraseña *</label>
+        <input type="password"
+               name="password"
+               class="w-full px-3 py-2 rounded bg-gray-900 border border-gray-600">
+        {% if errores.password %}
+          <p class="text-red-400 text-sm mt-1">{{ errores.password }}</p>
+        {% endif %}
+      </div>
+
+      <!-- PASSWORD 2 -->
+      <div>
+        <label class="block text-sm mb-1">Confirmar contraseña *</label>
+        <input type="password"
+               name="password2"
+               class="w-full px-3 py-2 rounded bg-gray-900 border border-gray-600">
+        {% if errores.password2 %}
+          <p class="text-red-400 text-sm mt-1">{{ errores.password2 }}</p>
+        {% endif %}
+      </div>
+
+    </div>
+
+    <!-- ================== BOTONES ================== -->
+    <div class="flex justify-end gap-3 mt-8">
+      <a href="{% url 'usuarios:index' %}"
+         class="px-4 py-2 rounded bg-gray-700 hover:bg-gray-600 text-sm">
+        Cancelar
+      </a>
+
+      <button type="submit"
+              class="px-6 py-2 rounded bg-pink-700 hover:bg-pink-800 text-sm">
+        Guardar
+      </button>
+    </div>
+
+  </form>
+</div>
+{% endblock %}

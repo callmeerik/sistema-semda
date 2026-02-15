@@ -1,0 +1,210 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Editar Usuario{% endblock %}
+
+{% block content %}
+<div class="min-h-screen bg-linear-60 from-gray-900 via-gray-800 to-black p-6">
+
+    <div class="max-w-4xl mx-auto space-y-8">
+
+        <!-- TÍTULO -->
+        <div>
+            <h1 class="text-3xl font-bold text-gray-100">Editar Usuario</h1>
+            <p class="text-gray-400 mt-1">
+                Modificar información del usuario
+            </p>
+        </div>
+
+        <!-- FORMULARIO -->
+        <form method="post"
+              class="bg-gray-900/90 border border-gray-800 rounded-2xl p-6 space-y-6">
+
+            {% csrf_token %}
+
+            <!-- GRID -->
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+
+                <!-- USERNAME -->
+                <div>
+                    <label class="block text-gray-300 mb-1 font-semibold">
+                        Usuario *
+                    </label>
+                    <input type="text"
+                           name="username"
+                           value="{{ request.POST.username|default:usuario.username }}"
+                           class="w-full bg-gray-800 text-white px-4 py-2 rounded-xl
+                                  border {% if errores.username %}border-red-500{% else %}border-gray-700{% endif %}
+                                  focus:ring-2 focus:ring-pink-600 outline-none">
+
+                    {% if errores.username %}
+                    <p class="text-red-400 text-sm mt-1">
+                        {{ errores.username }}
+                    </p>
+                    {% endif %}
+                </div>
+
+                <!-- CÉDULA -->
+                <div>
+                    <label class="block text-gray-300 mb-1 font-semibold">
+                        Cédula *
+                    </label>
+                    <input type="text"
+                           name="cedula"
+                           maxlength="10"
+                           value="{{ request.POST.cedula|default:usuario.cedula }}"
+                           class="w-full bg-gray-800 text-white px-4 py-2 rounded-xl
+                                  border {% if errores.cedula %}border-red-500{% else %}border-gray-700{% endif %}
+                                  focus:ring-2 focus:ring-pink-600 outline-none">
+
+                    {% if errores.cedula %}
+                    <p class="text-red-400 text-sm mt-1">
+                        {{ errores.cedula }}
+                    </p>
+                    {% endif %}
+                </div>
+
+                <!-- PRIMER NOMBRE -->
+                <div>
+                    <label class="block text-gray-300 mb-1 font-semibold">
+                        Primer Nombre *
+                    </label>
+                    <input type="text"
+                           name="primer_nombre"
+                           value="{{ request.POST.primer_nombre|default:usuario.primer_nombre }}"
+                           class="w-full bg-gray-800 text-white px-4 py-2 rounded-xl
+                                  border {% if errores.primer_nombre %}border-red-500{% else %}border-gray-700{% endif %}
+                                  focus:ring-2 focus:ring-pink-600 outline-none">
+
+                    {% if errores.primer_nombre %}
+                    <p class="text-red-400 text-sm mt-1">
+                        {{ errores.primer_nombre }}
+                    </p>
+                    {% endif %}
+                </div>
+
+                <!-- SEGUNDO NOMBRE -->
+                <div>
+                    <label class="block text-gray-300 mb-1 font-semibold">
+                        Segundo Nombre
+                    </label>
+                    <input type="text"
+                           name="segundo_nombre"
+                           value="{{ request.POST.segundo_nombre|default:usuario.segundo_nombre }}"
+                           class="w-full bg-gray-800 text-white px-4 py-2 rounded-xl
+                                  border border-gray-700
+                                  focus:ring-2 focus:ring-pink-600 outline-none">
+                </div>
+
+                <!-- PRIMER APELLIDO -->
+                <div>
+                    <label class="block text-gray-300 mb-1 font-semibold">
+                        Primer Apellido *
+                    </label>
+                    <input type="text"
+                           name="primer_apellido"
+                           value="{{ request.POST.primer_apellido|default:usuario.primer_apellido }}"
+                           class="w-full bg-gray-800 text-white px-4 py-2 rounded-xl
+                                  border {% if errores.primer_apellido %}border-red-500{% else %}border-gray-700{% endif %}
+                                  focus:ring-2 focus:ring-pink-600 outline-none">
+
+                    {% if errores.primer_apellido %}
+                    <p class="text-red-400 text-sm mt-1">
+                        {{ errores.primer_apellido }}
+                    </p>
+                    {% endif %}
+                </div>
+
+                <!-- SEGUNDO APELLIDO -->
+                <div>
+                    <label class="block text-gray-300 mb-1 font-semibold">
+                        Segundo Apellido
+                    </label>
+                    <input type="text"
+                           name="segundo_apellido"
+                           value="{{ request.POST.segundo_apellido|default:usuario.segundo_apellido }}"
+                           class="w-full bg-gray-800 text-white px-4 py-2 rounded-xl
+                                  border border-gray-700
+                                  focus:ring-2 focus:ring-pink-600 outline-none">
+                </div>
+
+                <!-- EMAIL -->
+                <div>
+                    <label class="block text-gray-300 mb-1 font-semibold">
+                        Correo *
+                    </label>
+                    <input type="email"
+                           name="email"
+                           value="{{ request.POST.email|default:usuario.email }}"
+                           class="w-full bg-gray-800 text-white px-4 py-2 rounded-xl
+                                  border {% if errores.email %}border-red-500{% else %}border-gray-700{% endif %}
+                                  focus:ring-2 focus:ring-pink-600 outline-none">
+
+                    {% if errores.email %}
+                    <p class="text-red-400 text-sm mt-1">
+                        {{ errores.email }}
+                    </p>
+                    {% endif %}
+                </div>
+
+                <!-- TELÉFONO -->
+                <div>
+                    <label class="block text-gray-300 mb-1 font-semibold">
+                        Teléfono
+                    </label>
+                    <input type="text"
+                           name="telefono"
+                           value="{{ request.POST.telefono|default:usuario.telefono }}"
+                           class="w-full bg-gray-800 text-white px-4 py-2 rounded-xl
+                                  border border-gray-700
+                                  focus:ring-2 focus:ring-pink-600 outline-none">
+                </div>
+
+                <!-- ROL -->
+                <div>
+                    <label class="block text-gray-300 mb-1 font-semibold">
+                        Rol *
+                    </label>
+                    <select name="rol"
+                            class="w-full bg-gray-800 text-white px-4 py-2 rounded-xl
+                                   border {% if errores.rol %}border-red-500{% else %}border-gray-700{% endif %}
+                                   focus:ring-2 focus:ring-pink-600 outline-none">
+                        <option value="">Seleccione</option>
+                        <option value="ADMINISTRADOR"
+                            {% if request.POST.rol|default:usuario.rol == 'ADMINISTRADOR' %}selected{% endif %}>
+                            Administrador
+                        </option>
+                        <option value="ASISTENTE"
+                            {% if request.POST.rol|default:usuario.rol == 'ASISTENTE' %}selected{% endif %}>
+                            Asistente
+                        </option>
+                    </select>
+
+                    {% if errores.rol %}
+                    <p class="text-red-400 text-sm mt-1">
+                        {{ errores.rol }}
+                    </p>
+                    {% endif %}
+                </div>
+
+            </div>
+
+            <!-- BOTONES -->
+            <div class="flex justify-end gap-3 pt-6">
+                <a href="{% url 'usuarios:index' %}"
+                   class="px-5 py-2 bg-gray-700 hover:bg-gray-600 text-white rounded-xl">
+                    Cancelar
+                </a>
+
+                <button type="submit"
+                        class="px-6 py-2 bg-pink-700 hover:bg-pink-800
+                               text-white rounded-xl font-semibold">
+                    Guardar cambios
+                </button>
+            </div>
+
+        </form>
+
+    </div>
+</div>
+{% endblock %}

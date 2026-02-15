@@ -1,0 +1,147 @@
+{% extends 'base.html' %}
+
+{% block title %}Editar Donante{% endblock %}
+
+{% block content %}
+<div class="min-h-screen bg-linear-60 from-gray-900 via-gray-800 to-black p-8">
+  <div class="max-w-5xl mx-auto bg-gray-900 p-8 rounded-xl border border-gray-800 space-y-8">
+
+    <h2 class="text-2xl text-gray-100 font-bold">Editar Donante</h2>
+
+    <form method="post" class="space-y-8">
+      {% csrf_token %}
+
+      <!-- GRID -->
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+
+        <!-- EMAIL -->
+        <div>
+          <label class="block text-sm text-gray-300 mb-1">Correo electrónico</label>
+          <input name="email" value="{{ donante.email }}"
+            class="w-full bg-gray-800 text-white px-4 py-2 rounded-xl border border-gray-700
+                   focus:ring-2 focus:ring-pink-600 focus:outline-none">
+        </div>
+
+        <!-- TELEFONO -->
+        <div>
+          <label class="block text-sm text-gray-300 mb-1">Teléfono</label>
+          <input name="telefono" value="{{ donante.telefono }}"
+            class="w-full bg-gray-800 text-white px-4 py-2 rounded-xl border border-gray-700
+                   focus:ring-2 focus:ring-pink-600 focus:outline-none">
+        </div>
+
+        <!-- DIRECCION (full width) -->
+        <div class="md:col-span-2">
+          <label class="block text-sm text-gray-300 mb-1">Dirección</label>
+          <input name="direccion" value="{{ donante.direccion }}"
+            class="w-full bg-gray-800 text-white px-4 py-2 rounded-xl border border-gray-700
+                   focus:ring-2 focus:ring-pink-600 focus:outline-none">
+        </div>
+
+        {% if donante.tipo_donante == 'NATURAL' %}
+
+        <!-- NOMBRE -->
+        <div>
+          <label class="block text-sm text-gray-300 mb-1">Nombre</label>
+          <input name="nombre" value="{{ donante.natural.nombre }}"
+            class="w-full bg-gray-800 text-white px-4 py-2 rounded-xl border border-gray-700
+                   focus:ring-2 focus:ring-pink-600 focus:outline-none">
+          {% if errores.nombre %}
+            <p class="text-red-400 text-sm mt-1">{{ errores.nombre }}</p>
+          {% endif %}
+        </div>
+
+        <!-- APELLIDO -->
+        <div>
+          <label class="block text-sm text-gray-300 mb-1">Apellido</label>
+          <input name="apellido" value="{{ donante.natural.apellido }}"
+            class="w-full bg-gray-800 text-white px-4 py-2 rounded-xl border border-gray-700
+                   focus:ring-2 focus:ring-pink-600 focus:outline-none">
+          {% if errores.apellido %}
+            <p class="text-red-400 text-sm mt-1">{{ errores.apellido }}</p>
+          {% endif %}
+        </div>
+
+        <!-- CEDULA -->
+        <div>
+          <label class="block text-sm text-gray-300 mb-1">Cédula</label>
+          <input name="cedula" value="{{ donante.natural.cedula }}" readonly
+            class="w-full bg-gray-700 text-gray-300 px-4 py-2 rounded-xl border border-gray-700 cursor-not-allowed">
+          {% if errores.cedula %}
+            <p class="text-red-400 text-sm mt-1">{{ errores.cedula }}</p>
+          {% endif %}
+        </div>
+
+        {% else %}
+
+        <!-- RAZON SOCIAL -->
+        <div class="md:col-span-2">
+          <label class="block text-sm text-gray-300 mb-1">Razón social</label>
+          <input name="razon_social" value="{{ donante.juridico.razon_social }}"
+            class="w-full bg-gray-800 text-white px-4 py-2 rounded-xl border border-gray-700
+                   focus:ring-2 focus:ring-pink-600 focus:outline-none">
+          {% if errores.razon_social %}
+            <p class="text-red-400 text-sm mt-1">{{ errores.razon_social }}</p>
+          {% endif %}
+        </div>
+
+        <!-- RUC -->
+        <div>
+          <label class="block text-sm text-gray-300 mb-1">RUC</label>
+          <input name="ruc" value="{{ donante.juridico.ruc }}" readonly
+            class="w-full bg-gray-700 text-gray-300 px-4 py-2 rounded-xl border border-gray-700 cursor-not-allowed">
+          {% if errores.ruc %}
+            <p class="text-red-400 text-sm mt-1">{{ errores.ruc }}</p>
+          {% endif %}
+        </div>
+
+        <!-- CARGO -->
+        <div>
+          <label class="block text-sm text-gray-300 mb-1">Cargo del representante</label>
+          <input name="cargo_representante" value="{{ donante.juridico.cargo_representante }}"
+            class="w-full bg-gray-800 text-white px-4 py-2 rounded-xl border border-gray-700
+                   focus:ring-2 focus:ring-pink-600 focus:outline-none">
+        </div>
+
+        <!-- REPRESENTANTE -->
+        <div>
+          <label class="block text-sm text-gray-300 mb-1">Nombre del representante</label>
+          <input name="nombre_representante" value="{{ donante.juridico.nombre_representante }}"
+            class="w-full bg-gray-800 text-white px-4 py-2 rounded-xl border border-gray-700
+                   focus:ring-2 focus:ring-pink-600 focus:outline-none">
+          {% if errores.nombre_representante %}
+            <p class="text-red-400 text-sm mt-1">{{ errores.nombre_representante }}</p>
+          {% endif %}
+        </div>
+
+        <div>
+          <label class="block text-sm text-gray-300 mb-1">Apellido del representante</label>
+          <input name="apellido_representante" value="{{ donante.juridico.apellido_representante }}"
+            class="w-full bg-gray-800 text-white px-4 py-2 rounded-xl border border-gray-700
+                   focus:ring-2 focus:ring-pink-600 focus:outline-none">
+          {% if errores.apellido_representante %}
+            <p class="text-red-400 text-sm mt-1">{{ errores.apellido_representante }}</p>
+          {% endif %}
+        </div>
+
+        {% endif %}
+      </div>
+
+      <!-- BOTONES -->
+      <div class="flex justify-end gap-3 pt-6">
+        <a href="{% url 'donantes:index' %}"
+          class="px-6 py-2 rounded-xl bg-gray-600 text-white hover:bg-gray-700 transition">
+          Cancelar
+        </a>
+
+        <button type="submit"
+          class="px-6 py-2 rounded-xl bg-pink-700 hover:bg-pink-800 text-white font-semibold transition">
+          Guardar cambios
+        </button>
+      </div>
+
+    </form>
+
+  </div>
+</div>
+{% endblock %}

@@ -1,0 +1,214 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Reporte de Entregas - Institución</title>
+
+    <style>
+        /* ===== Configuración de hoja y márgenes ===== */
+        @page {
+            size: letter;
+            margin-top: 55px;
+            margin-bottom: 45px;
+            margin-left: 2cm;
+            margin-right: 2cm;
+        }
+
+        body {
+            font-family: Arial, Helvetica, sans-serif;
+            font-size: 12px;
+            color: #111;
+            position: relative;
+        }
+
+        /* ===== Marca de agua institucional ===== */
+        body::before {
+            content: "";
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-image: url("static/images/logo2.png");
+            background-repeat: no-repeat;
+            background-position: center;
+            background-size: 85%;
+            opacity: 0.05;
+            z-index: -1;
+        }
+
+        /* ===== Encabezado ===== */
+        .header {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 55px;
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-end;
+            border-bottom: 2px solid #fb7ce0;
+            padding-bottom: 4px;
+        }
+
+        .logo img {
+            width: 70px;
+            max-height: 50px;
+            object-fit: contain;
+        }
+
+        .titulo {
+            text-align: right;
+        }
+
+        .titulo h1 {
+            font-size: 16px;
+            margin: 0;
+        }
+
+        .titulo h3 {
+            font-size: 12px;
+            margin: 2px 0 0 0;
+            font-weight: normal;
+        }
+
+        /* ===== Contenido principal ===== */
+        .contenido {
+            margin-top: 75px;
+            margin-bottom: 85px;
+        }
+
+        .info p {
+            margin: 3px 0;
+        }
+
+        /* ===== Tabla de ítems entregados ===== */
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 12px;
+        }
+
+        th, td {
+            border: 1px solid #444;
+            padding: 6px;
+            font-size: 11px;
+        }
+
+        th {
+            background-color: #eee;
+            text-align: left;
+        }
+
+        .text-center {
+            text-align: center;
+        }
+
+        /* ===== Firmas ===== */
+        .firmas {
+            margin-top: 50px;
+            display: flex;
+            justify-content: space-between;
+        }
+
+        .firma {
+            width: 30%;
+            text-align: center;
+        }
+
+        .firma-linea {
+            border-top: 1px solid #000;
+            margin-top: 40px;
+            padding-top: 5px;
+            font-size: 11px;
+        }
+
+        /* ===== Pie de página ===== */
+        .footer {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            height: 90px;
+            border-top: 2px solid rgb(241, 105, 180);
+            text-align: center;
+            font-size: 9px;
+            color: #fb0ca7;
+            padding-top: 4px;
+        }
+    </style>
+</head>
+
+<body>
+
+    <!-- Encabezado con logo y título -->
+    <header class="header">
+        <div class="logo">
+            <img src="file:///{{ logo_ruta }}" alt="Logo Fundación SEMDA">
+        </div>
+        <div class="titulo">
+            <h1>Reporte de Entregas</h1>
+            <h3>Institución</h3>
+        </div>
+    </header>
+
+    <!-- Contenido -->
+    <div class="contenido">
+
+        <!-- Información de la institución -->
+        <div class="info">
+            <p><strong>Institución:</strong> {{ institucion.nombre_institucion }}</p>
+            <p><strong>Tipo de institución:</strong> {{ institucion.tipo }}</p>
+            <p><strong>Representante:</strong> {{ institucion.nombre_representante }} {{institucion.apellido_representante}}</p>
+            <p><strong>RUC:</strong> {{ institucion.ruc }}</p>
+            <p><strong>Fecha de entrega:</strong> {{ fecha|date:"d/m/Y" }}</p>
+            <p><strong>Total de ítems entregados:</strong> {{ entregas.count }}</p>
+        </div>
+
+        <!-- Detalle de ítems entregados -->
+        <table>
+            <thead>
+                <tr>
+                    <th style="width: 35%;">Ítem</th>
+                    <th style="width: 25%;">Categoría</th>
+                    <th class="text-center" style="width: 15%;">Cantidad</th>
+                    <th style="width: 25%;">Observaciones</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for e in entregas %}
+                <tr>
+                    <td>{{ e.item.descripcion }}</td>
+                    <td>{{ e.item.categoria.nombre }}</td>
+                    <td class="text-center">
+                        {{ e.cantidad_entregada }} {{ e.item.unidad_medida|lower }}
+                    </td>
+                    <td>{{ e.observaciones|default:"—" }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+
+        <!-- Firmas -->
+        <div class="firmas">
+            <div class="firma">
+                <div class="firma-linea">Representante Institución</div>
+            </div>
+            <div class="firma">
+                <div class="firma-linea">Responsable Fundación</div>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- Pie de página -->
+    <footer class="footer">
+        Fundación Semillas de Amor – Quito, Ecuador  
+        | Teléfono: (+593) 99 542 8764  
+        | correo@semdaecuador.org  
+        | www.semdaecuador.org
+    </footer>
+
+</body>
+</html>

@@ -1,0 +1,230 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Crear Beneficiario{% endblock %}
+
+{% block content %}
+<div class="min-h-screen bg-linear-60 from-gray-900 via-gray-800 to-black p-6">
+
+    <div class="max-w-4xl mx-auto">
+
+        <h1 class="text-3xl font-bold text-white text-center mb-8">
+            Crear Beneficiario
+        </h1>
+
+        <form method="post" class="bg-gray-800 rounded-2xl p-8 space-y-6">
+            {% csrf_token %}
+
+            <!-- TIPO -->
+            <div>
+                <label class="text-gray-300 text-sm font-semibold">Tipo de Beneficiario</label>
+                <select name="tipo" id="tipo"
+                    class="w-full bg-gray-900 text-white px-4 py-3 rounded-xl mt-1 focus:ring-2 focus:ring-pink-600 outline-none
+                    {% if errores.tipo %}ring-red-700{% endif %}">
+                    <option value="PARTICULAR">Particular</option>
+                    <option value="INSTITUCIONAL">Institucional</option>
+                </select>
+                {% if errores.tipo %}
+                    <p class="text-red-700 text-sm"> {{ errores.tipo }} </p>
+                {% endif %}
+            </div>
+
+            <!-- DATOS GENERALES -->
+            <div class="grid md:grid-cols-3 gap-4">
+                <div>
+                    <label class="text-gray-300 text-sm">Teléfono</label>
+                    <input name="telefono"
+                        class="w-full bg-gray-900 text-white px-4 py-2 rounded-xl focus:ring-2 focus:ring-pink-600">
+                
+                </div>
+
+                <div>
+                    <label class="text-gray-300 text-sm">Dirección</label>
+                    <input name="direccion"
+                        class="w-full bg-gray-900 text-white px-4 py-2 rounded-xl focus:ring-2 focus:ring-pink-600">
+                </div>
+
+                <div>
+                    <label class="text-gray-300 text-sm">Email</label>
+                    <input name="email"
+                        class="w-full bg-gray-900 text-white px-4 py-2 rounded-xl focus:ring-2 focus:ring-pink-600">
+                </div>
+            </div>
+
+            <!-- ========================= -->
+            <!-- PARTICULAR -->
+            <!-- ========================= -->
+
+            <div id="formParticular" class="space-y-5">
+
+                <h2 class="text-lg text-pink-500 font-semibold border-b border-gray-700 pb-2 ">
+                    Datos del Particular
+                </h2>
+
+                <div class="grid md:grid-cols-2 gap-4">
+                    <div>
+                        <label class="text-gray-300 text-sm">Primer Nombre</label>
+                        <input name="primer_nombre"
+                            class="w-full bg-gray-900 text-white px-4 py-2 rounded-xl focus:ring-2 focus:ring-pink-600">
+                        {% if errores.primer_nombre %}
+                            <p class="text-red-700 text-sm"> {{ errores.primer_nombre }} </p>
+                        {% endif %}
+                    </div>
+
+                    <div>
+                        <label class="text-gray-300 text-sm">Segundo Nombre</label>
+                        <input name="segundo_nombre"
+                            class="w-full bg-gray-900 text-white px-4 py-2 rounded-xl focus:ring-2 focus:ring-pink-600">
+                    </div>
+                </div>
+
+                <div class="grid md:grid-cols-2 gap-4">
+                    <div>
+                        <label class="text-gray-300 text-sm">Primer Apellido</label>
+                        <input name="primer_apellido"
+                            class="w-full bg-gray-900 text-white px-4 py-2 rounded-xl focus:ring-2 focus:ring-pink-600">
+                        {% if errores.primer_apellido %}
+                            <p class="text-red-700 text-sm"> {{ errores.primer_apellido }} </p>
+                        {% endif %}
+                    </div>
+
+                    <div>
+                        <label class="text-gray-300 text-sm">Segundo Apellido</label>
+                        <input name="segundo_apellido"
+                            class="w-full bg-gray-900 text-white px-4 py-2 rounded-xl focus:ring-2 focus:ring-pink-600">
+                    </div>
+                </div>
+
+                <div class="grid md:grid-cols-3 gap-4">
+                    <div>
+                        <label class="text-gray-300 text-sm">Cédula</label>
+                        <input name="cedula"
+                            class="w-full bg-gray-900 text-white px-4 py-2 rounded-xl focus:ring-2 focus:ring-pink-600">
+                        {% if errores.cedula %}
+                            <p class="text-red-700 text-sm"> {{ errores.cedula }} </p>
+                        {% endif %}
+                    </div>
+
+                    <div>
+                        <label class="text-gray-300 text-sm">Sexo</label>
+                        <select name="sexo"
+                            class="w-full bg-gray-900 text-white px-4 py-2 rounded-xl focus:ring-2 focus:ring-pink-600">
+                            <option value="M">Masculino</option>
+                            <option value="F">Femenino</option>
+                        </select>
+                    </div>
+
+                    <div>
+                        <label class="text-gray-300 text-sm">Edad</label>
+                        <input type="number" name="edad"
+                            class="w-full bg-gray-900 text-white px-4 py-2 rounded-xl focus:ring-2 focus:ring-pink-600">
+                    </div>
+                </div>
+
+            </div>
+
+            <!-- ========================= -->
+            <!-- INSTITUCIONAL -->
+            <!-- ========================= -->
+
+            <div id="formInstitucional" class="space-y-5 hidden">
+
+                <h2 class="text-lg text-pink-500 font-semibold border-b border-gray-700 pb-2 ">
+                    Datos de la Institución
+                </h2>
+
+                <div>
+                    <label class="text-gray-300 text-sm">Nombre de la Institución</label>
+                    <input name="nombre_institucion"
+                        class="w-full bg-gray-900 text-white px-4 py-2 rounded-xl ring-2 focu focus:ring-2 focus:ring-pink-600">
+                    {% if errores.nombre_institucion %}
+                        <p class="text-red-700 text-sm"> {{ errores.nombre_institucion }} </p>
+                    {% endif %}
+                </div>
+
+                <div class="grid md:grid-cols-2 gap-4">
+                    <div>
+                        <label class="text-gray-300 text-sm">Tipo de Institución</label>
+                        <select name="tipo_institucion"
+                            class="w-full bg-gray-900 text-white px-4 py-2 rounded-xl focus:ring-2 focus:ring-pink-600">
+                            <option value="CASA_HOGAR">Casa Hogar</option>
+                            <option value="FUNDACION">Fundación</option>
+                            <option value="ASOCIACION">Asociación</option>
+                            <option value="OTRO">Otro</option>
+                        </select>
+                        {% if errores.tipo_institucion %}
+                            <p class="text-red-700 text-sm"> {{ errores.tipo_institucion }} </p>
+                        {% endif %}
+                    </div>
+
+                    <div>
+                        <label class="text-gray-300 text-sm">RUC</label>
+                        <input name="ruc"
+                            class="w-full bg-gray-900 text-white px-4 py-2 rounded-xl focus:ring-2 focus:ring-pink-600">
+                        {% if errores.ruc %}
+                            <p class="text-red-700 text-sm"> {{ errores.ruc }} </p>
+                        {% endif %}
+                    </div>
+                </div>
+
+                <div class="grid md:grid-cols-2 gap-4">
+                    <div>
+                        <label class="text-gray-300 text-sm">Nombre Representante</label>
+                        <input name="nombre_representante"
+                            class="w-full bg-gray-900 text-white px-4 py-2 rounded-xl focus:ring-2 focus:ring-pink-600">
+                        {% if errores.nombre_rep %}
+                            <p class="text-red-700 text-sm"> {{ errores.nombre_rep }} </p>
+                        {% endif %}
+                    </div>
+
+                    <div>
+                        <label class="text-gray-300 text-sm">Apellido Representante</label>
+                        <input name="apellido_representante"
+                            class="w-full bg-gray-900 text-white px-4 py-2 rounded-xl focus:ring-2 focus:ring-pink-600">
+                        {% if errores.apellido_rep %}
+                            <p class="text-red-700 text-sm"> {{ errores.apellido_rep }} </p>
+                        {% endif %}
+                    </div>
+                </div>
+
+            </div>
+
+            <!-- BOTONES -->
+            <div class="flex justify-end gap-3 pt-6">
+                <a href="{% url 'beneficiarios:beneficiario_index' %}"
+                    class="px-5 py-2 bg-gray-600 hover:bg-gray-500 text-white rounded-xl focus:ring-2 focus:ring-pink-600">
+                    Cancelar
+                </a>
+
+                <button
+                    class="px-5 py-2 bg-pink-700 hover:bg-pink-800 text-white rounded-x l focus:ring-2 focus:ring-pink-600">
+                    Guardar
+                </button>
+            </div>
+
+        </form>
+
+    </div>
+</div>
+{% endblock %}
+
+{% block js %}
+<script>
+const tipoSelect = document.getElementById('tipo')
+const formParticular = document.getElementById('formParticular')
+const formInstitucional = document.getElementById('formInstitucional')
+
+function toggleForms() {
+    if (tipoSelect.value === 'PARTICULAR') {
+        formParticular.classList.remove('hidden')
+        formInstitucional.classList.add('hidden')
+    } else {
+        formInstitucional.classList.remove('hidden')
+        formParticular.classList.add('hidden')
+    }
+}
+
+tipoSelect.addEventListener('change', toggleForms)
+toggleForms()
+</script>
+{% endblock %}

@@ -1,0 +1,238 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Entrega de Ítem{% endblock %}
+
+{% block content %}
+<div class="min-h-screen bg-linear-60 from-gray-900 via-gray-800 to-black p-6">
+
+  <div class="max-w-6xl mx-auto space-y-8">
+
+    <!-- HEADER -->
+    <div>
+      <h1 class="text-3xl font-bold text-gray-100">Entrega de Ítem</h1>
+      <p class="text-gray-400 mt-1">Registrar entrega a beneficiario</p>
+    </div>
+
+    <!-- INFO ITEM -->
+    <div class="bg-gray-900/90 border border-gray-800 rounded-2xl p-6 space-y-2">
+      <p class="text-white font-semibold text-lg">{{ item.descripcion }}</p>
+
+      <p class="text-gray-300 text-sm">
+        Categoría:
+        <span class="text-gray-200">{{ item.categoria.nombre }}</span>
+      </p>
+
+      <p class="text-gray-300 text-sm">
+        Donante:
+        <span class="text-gray-200">{{ item.donacion.donante.nombre_donante }}</span>
+      </p>
+
+      <p class="text-gray-300 text-sm">
+        Stock disponible:
+        <span class="text-pink-500 font-semibold">
+          {{ item.cantidad_disponible }} {{ item.unidad_medida|capfirst }}
+        </span>
+      </p>
+
+      <p class="text-sm font-semibold">
+        Estado:
+        {% if item.estado == 'DISPONIBLE' %}
+          <span class="text-green-400">Disponible</span>
+        {% elif item.estado == 'AGOTADO' %}
+          <span class="text-yellow-400">Agotado</span>
+        {% else %}
+          <span class="text-red-400">Vencido</span>
+        {% endif %}
+      </p>
+    </div>
+
+    {% if item.estado != 'DISPONIBLE' %}
+      <div class="bg-red-900/40 border border-red-600 rounded-2xl p-6 text-center">
+        <p class="text-red-300 font-semibold">
+          Este ítem no puede ser entregado porque se encuentra
+          <span class="uppercase">{{ item.estado }}</span>.
+        </p>
+
+        <a href="{% url 'donaciones:inventario' %}"
+           class="inline-block mt-4 px-6 py-2 bg-gray-700 hover:bg-gray-600 text-white rounded-xl">
+          Volver al inventario
+        </a>
+      </div>
+    {% else %}
+
+    <!-- FORM -->
+    <form method="post"
+          class="bg-gray-900/90 border rounded-2xl p-6 space-y-6">
+
+      {% csrf_token %}
+
+      <!-- ORIGEN -->
+      <div>
+        <label class="block text-gray-300 mb-1 font-semibold">
+          Tipo de beneficiario
+        </label>
+
+        <select id="origen"
+                class="w-full bg-gray-800 text-white px-4 py-2 rounded-xl
+                       border border-gray-700 focus:ring-2 focus:ring-pink-600">
+          <option value="">Seleccione tipo</option>
+          <option value="institucional">Institución</option>
+          <option value="particular">Particular</option>
+        </select>
+      </div>
+
+      <!-- BENEFICIARIO -->
+      <div>
+        <label class="block text-gray-300 mb-1 font-semibold">
+          Beneficiario
+        </label>
+
+        <select name="beneficiario"
+                id="beneficiario"
+                class="w-full bg-gray-800 text-white px-4 py-2 rounded-xl
+                       border border-gray-700 focus:ring-2 focus:ring-pink-600">
+          <option value="">Seleccione un beneficiario</option>
+        </select>
+
+        {% if errores.beneficiario %}
+          <p class="text-red-400 text-sm mt-1">{{ errores.beneficiario }}</p>
+        {% endif %}
+      </div>
+
+      <!-- CANTIDAD -->
+      <div>
+        <label class="block text-gray-300 mb-1 font-semibold">
+          Cantidad a entregar
+        </label>
+
+        <input type="number"
+               name="cantidad"
+               min="1"
+               max="{{ item.cantidad_disponible }}"
+               value="{{ data.cantidad }}"
+               class="w-full bg-gray-800 text-white px-4 py-2 rounded-xl
+                      border border-gray-700 focus:ring-2 focus:ring-pink-600">
+
+        {% if errores.cantidad %}
+          <p class="text-red-400 text-sm mt-1">{{ errores.cantidad }}</p>
+        {% endif %}
+      </div>
+
+      <!-- REGISTRADO POR -->
+      <div>
+        <label class="block text-gray-300 mb-1 font-semibold">
+          Registrado por
+        </label>
+
+        <input type="text"
+               value="{{ request.user.get_full_name }}"
+               readonly
+               class="w-full bg-gray-700 text-gray-300 px-4 py-2 rounded-xl
+                      border border-gray-700 cursor-not-allowed">
+      </div>
+
+      <!-- FECHA -->
+      <div>
+        <label class="block text-gray-300 mb-1 font-semibold">
+          Fecha de entrega
+        </label>
+
+        <input type="date"
+               name="fecha_entrega"
+               min="{{ today|date:'Y-m-d' }}"
+               max="{{ today|date:'Y'|add:'1' }}-12-31"
+               value="{{ data.fecha_entrega }}"
+               class="w-full bg-gray-800 text-white px-4 py-2 rounded-xl
+                      border border-gray-700 focus:ring-2 focus:ring-pink-600">
+
+        {% if errores.fecha_entrega %}
+          <p class="text-red-400 text-sm mt-1">{{ errores.fecha_entrega }}</p>
+        {% endif %}
+      </div>
+
+      <!-- OBSERVACIONES -->
+      <div>
+        <label class="block text-gray-300 mb-1 font-semibold">
+          Observaciones
+        </label>
+
+        <textarea name="observaciones"
+                  rows="3"
+                  class="w-full bg-gray-800 text-white px-4 py-2 rounded-xl
+                         border border-gray-700 resize-none focus:ring-2 focus:ring-pink-600">{{ data.observaciones }}</textarea>
+      </div>
+
+      <!-- ACTIONS -->
+      <div class="flex justify-end gap-3 pt-4">
+        <a href="{% url 'donaciones:inventario' %}"
+           class="px-5 py-2 bg-gray-700 hover:bg-gray-600 text-white rounded-xl">
+          Cancelar
+        </a>
+
+        <button
+          {% if item.cantidad_disponible <= 0 %}
+            disabled
+          {% endif %}
+          class="px-6 py-2 bg-pink-700 hover:bg-pink-800 disabled:bg-gray-600
+                 text-white rounded-xl font-semibold">
+          Registrar entrega
+        </button>
+      </div>
+
+    </form>
+    {% endif %}
+  </div>
+</div>
+{% endblock %}
+
+{% block js %}
+<script>
+  window.beneficiariosInstitucionales = [
+    {% for b in beneficiarios_institucionales %}
+      {
+        id: {{ b.id }},
+        nombre: "{{ b.institucional.nombre_institucion }}",
+        tipo: "{{ b.institucional.tipo_institucion }}"
+      },
+    {% endfor %}
+  ];
+
+  window.beneficiariosParticulares = [
+    {% for b in beneficiarios_particulares %}
+      {
+        id: {{ b.id }},
+        nombre: "{{ b.particular.primer_nombre }} {{ b.particular.primer_apellido }}",
+        cedula: "{{ b.particular.cedula }}"
+      },
+    {% endfor %}
+  ];
+
+  const origenSelect = document.getElementById("origen");
+  const beneficiarioSelect = document.getElementById("beneficiario");
+
+  origenSelect.addEventListener("change", function () {
+    beneficiarioSelect.innerHTML = '<option value="">Seleccione un beneficiario</option>';
+
+    if (this.value === "institucional") {
+      window.beneficiariosInstitucionales.forEach(b => {
+        beneficiarioSelect.innerHTML += `
+          <option value="${b.id}">
+            ${b.nombre} - ${b.tipo}
+          </option>
+        `;
+      });
+    }
+
+    if (this.value === "particular") {
+      window.beneficiariosParticulares.forEach(b => {
+        beneficiarioSelect.innerHTML += `
+          <option value="${b.id}">
+            ${b.nombre} - CI: ${b.cedula}
+          </option>
+        `;
+      });
+    }
+  });
+</script>
+{% endblock %}

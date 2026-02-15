@@ -1,0 +1,130 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="min-h-screen bg-gray-900 p-6 text-white">
+  
+  <h1 class="text-3xl font-bold mb-6">
+    Entregas por Institución
+  </h1>
+  
+  <!-- BUSCADOR -->
+  <form method="get" class="mb-6 max-w-md">
+    <div class="flex gap-2">
+      <input
+        type="text"
+        name="busqueda"
+        value="{{ search }}"
+        placeholder="Buscar institución..."
+        class="flex-1 bg-gray-800 border border-gray-700 px-4 py-2 rounded-lg
+               text-white focus:ring-2 focus:ring-pink-600 outline-none"
+      >
+      <button
+        type="submit"
+        class="bg-pink-700 text-white hover:bg-pink-800 px-5 rounded-lg">
+        Buscar
+      </button>
+      {% if search %}
+      <a href="{% url 'reportes:entregas_institucion' %}"
+         class="bg-gray-700 hover:bg-gray-600 px-5 rounded-lg flex items-center">
+        Limpiar
+      </a>
+      {% endif %}
+    </div>
+  </form>
+  
+  <!-- TABLA DESKTOP -->
+  <div class="hidden md:block">
+    <table class="w-full border border-gray-700 rounded-lg overflow-hidden">
+      <thead class="bg-gray-800">
+        <tr>
+          <th class="p-3 text-left">Institución</th>
+          <th class="p-3 text-center">Tipo</th>
+          <th class="p-3 text-center">Ítems Entregados</th>
+          <th class="p-3 text-center">Fecha Entrega</th>
+          <th class="p-3 text-center">Acciones</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for r in registros %}
+        <tr class="border-t border-gray-700 hover:bg-gray-800/50">
+          <td class="p-3">
+            {{ r.beneficiario__institucional__nombre_institucion }}
+          </td>
+          <td class="p-3 text-center">
+            {{ r.beneficiario__institucional__tipo_institucion }}
+          </td>
+           <td class="p-3 text-center font-semibold">
+            {{ r.fecha_entrega }}
+          </td>
+          <td class="p-3 text-center font-semibold">
+            {{ r.total_items }}
+          </td>
+          <td class="p-3 text-center">
+            <a
+              href="{% url 'reportes:entregas_institucional_fecha_pdf' r.beneficiario__id r.fecha_entrega %}"
+              target="_blank"
+              class="bg-pink-700 hover:bg-pink-800 px-4 py-2 rounded-lg inline-block">
+              📄 Generar PDF
+            </a>
+          </td>
+        </tr>
+        {% empty %}
+        <tr>
+          <td colspan="4" class="p-6 text-center text-gray-400">
+            No hay registros de entregas realizadas
+          </td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+  
+  <!-- VISTA MÓVIL -->
+  <div class="md:hidden space-y-4">
+    {% for r in registros %}
+    <div class="bg-gray-800 p-4 rounded-xl space-y-2 border border-gray-700">
+      <p class="font-bold text-lg">
+        {{ r.beneficiario__institucional__nombre_institucion }}
+      </p>
+      <p>🏢 Tipo: {{ r.beneficiario__institucional__tipo_institucion }}</p>
+      <p>📦 Ítems entregados: <strong>{{ r.total_items }}</strong></p>
+      <a
+        href="{% url 'reportes:entregas_institucional_fecha_pdf' r.beneficiario__id r.fecha_entrega %}"
+        target="_blank"
+        class="block text-center bg-pink-700 hover:bg-pink-800 py-2 rounded-lg mt-3">
+        📄 Generar PDF
+      </a>
+    </div>
+    {% empty %}
+      <p class="text-gray-400 text-center py-8">
+        No hay registros de entregas realizadas
+      </p>
+    {% endfor %}
+  </div>
+  
+  <!-- PAGINACIÓN -->
+  {% if registros.paginator.num_pages > 1 %}
+  <div class="flex justify-center gap-2 mt-8 flex-wrap">
+    
+    {% if registros.has_previous %}
+      <a href="?page={{ registros.previous_page_number }}{% if search %}&busqueda={{ search }}{% endif %}"
+         class="px-4 py-2 bg-gray-700 hover:bg-gray-600 rounded-lg">
+        ← Anterior
+      </a>
+    {% endif %}
+    
+    <span class="px-4 py-2 text-gray-300 bg-gray-800 rounded-lg">
+      Página {{ registros.number }} de {{ registros.paginator.num_pages }}
+    </span>
+    
+    {% if registros.has_next %}
+      <a href="?page={{ registros.next_page_number }}{% if search %}&busqueda={{ search }}{% endif %}"
+         class="px-4 py-2 bg-gray-700 hover:bg-gray-600 rounded-lg">
+        Siguiente →
+      </a>
+    {% endif %}
+    
+  </div>
+  {% endif %}
+
+</div>
+{% endblock %}

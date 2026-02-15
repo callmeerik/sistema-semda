@@ -1,0 +1,241 @@
+{% extends 'base.html' %}
+
+{% block title %}Donaciones{% endblock %}
+
+{% block content %}
+<div class="min-h-screen bg-linear-60 from-gray-900 via-gray-800 to-black p-6">
+
+  <!-- HEADER -->
+  <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-6">
+    <h2 class="text-3xl font-bold text-gray-100">Donaciones</h2>
+
+    <a href="{% url 'donaciones:crear' %}"
+       class="bg-pink-700 hover:bg-pink-800 text-white px-5 py-2 rounded text-center">
+      + Nueva Donación
+    </a>
+  </div>
+
+  <!-- BUSQUEDA + BOTON -->
+  <form method="get" class="bg-gray-900/90 backdrop-blur rounded-2xl p-6 border border-gray-800 space-y-6">
+    <div class="flex flex-col sm:flex-row gap-3">
+      <input type="text"
+             name="busqueda"
+             value="{{ busqueda }}"
+             placeholder="Buscar por donante..."
+             class="flex-1 bg-gray-800 text-gray-100 px-5 py-3 rounded-xl
+                      focus:ring-2 focus:ring-pink-600 outline-none0">
+
+      <button type="submit"
+              class="px-6 py-3 bg-pink-700 hover:bg-pink-800 text-white rounded-xl">
+        Buscar
+      </button>
+      {% if search %}
+      <a href="{% url 'donaciones:index' %}"
+         class="bg-gray-700 hover:bg-gray-600 px-5 rounded-lg flex items-center">
+        Limpiar
+      </a>
+      {% endif %}
+    </div>
+
+    <!-- FILTROS -->
+    <div class="flex gap-6 text-gray-300">
+      <label class="flex items-center gap-2">
+        <input type="radio" name="estado" value=""
+               {% if not estado %}checked{% endif %}
+               class="accent-pink-600">
+        Todos
+      </label>
+
+      <label class="flex items-center gap-2">
+        <input type="radio" name="estado" value="ACTIVA"
+               {% if estado == 'ACTIVA' %}checked{% endif %}
+               class="accent-pink-600">
+        Activas
+      </label>
+
+      <label class="flex items-center gap-2">
+        <input type="radio" name="estado" value="COMPLETADA"
+               {% if estado == 'COMPLETADA' %}checked{% endif %}
+               class="accent-pink-600">
+        Completadas
+      </label>
+    </div>
+  </form>
+
+  <!-- ================= DESKTOP ================= -->
+  <div class="hidden md:block overflow-x-auto">
+    <table class="min-w-full bg-gray-900 border border-gray-800 rounded-lg overflow-hidden">
+      <thead class="bg-gray-800 text-gray-300 text-sm uppercase">
+        <tr>
+          <th class="px-4 py-3 text-left">Donante</th>
+          <th class="px-4 py-3 text-left">Fecha</th>
+          <th class="px-4 py-3 text-center">Items</th>
+          <th class="px-4 py-3 text-left">Descripción</th>
+          <th class="px-4 py-3 text-center">Estado</th>
+          <th class="px-4 py-3 text-center">Acciones</th>
+        </tr>
+      </thead>
+
+      <tbody class="divide-y divide-gray-800">
+        {% for donacion in donaciones %}
+        <tr class="hover:bg-gray-800/50">
+
+          <td class="px-4 py-3 text-gray-100">
+            {% if donacion.donante.tipo_donante == 'NATURAL' %}
+              {{ donacion.donante.natural.nombre }} {{ donacion.donante.natural.apellido }}
+            {% else %}
+              {{ donacion.donante.juridico.razon_social }}
+            {% endif %}
+          </td>
+
+          <td class="px-4 py-3 text-gray-300">
+            {{ donacion.fecha_donacion }}
+          </td>
+
+          <td class="px-4 py-3 text-center text-pink-500 font-bold">
+            {{ donacion.cantidad_items }}
+          </td>
+
+          <td class="px-4 py-3 text-gray-300">
+            {{ donacion.descripcion|default:"—"|truncatechars:40 }}
+          </td>
+
+          <td class="px-4 py-3" >
+            {% if donacion.estado == 'ACTIVA' %}
+                <span class="text-green-500"> {{ donacion.estado }} </span>  
+            {% else %}  
+                <span class="text-orange-500"> {{ donacion.estado }} </span>  
+            {% endif %}
+        </td>
+
+          <td class="px-4 py-3 text-center space-x-2">
+            <a href="{% url 'donaciones:detalle' donacion.id %}"
+               class="bg-yellow-500 hover:bg-yellow-600 text-black px-3 py-1 rounded text-sm">
+              Ver
+            </a>
+
+            <a href="{% url 'donaciones:editar' donacion.id %}"
+               class="bg-violet-600 hover:bg-violet-700 text-white px-3 py-1 rounded text-sm">
+              Editar
+            </a>
+
+            {% if donacion.estado == 'ACTIVA' %}
+            <a href="{% url 'donaciones:agregar_item' donacion.id %}"
+               class="bg-cyan-600 hover:bg-cyan-700 text-white px-3 py-1 rounded text-sm">
+              Agregar Items
+            </a>
+            {% endif %}
+          </td>
+
+        </tr>
+        {% empty %}
+        <tr>
+          <td colspan="5" class="px-4 py-6 text-center text-gray-400">
+            No hay donaciones registradas
+          </td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+
+  <!-- ================= MOBILE ================= -->
+  <div class="md:hidden flex flex-col gap-4">
+    {% for donacion in donaciones %}
+    <div class="bg-gray-900/60 border border-pink-600/40 rounded-xl p-4 space-y-3">
+
+      <div>
+        <p class="text-sm text-gray-400">Donante</p>
+        <p class="text-gray-100 font-semibold">
+          {% if donacion.donante.tipo_donante == 'NATURAL' %}
+            {{ donacion.donante.natural.nombre }} {{ donacion.donante.natural.apellido }}
+          {% else %}
+            {{ donacion.donante.juridico.razon_social }}
+          {% endif %}
+        </p>
+      </div>
+
+      <div class="flex justify-between">
+        <div>
+          <p class="text-sm text-gray-400">Fecha</p>
+          <p class="text-gray-300">{{ donacion.fecha_donacion }}</p>
+        </div>
+
+        <div>
+          <p class="text-sm text-gray-400">Items</p>
+          <p class="text-pink-500 font-bold text-lg">
+            {{ donacion.total_items }}
+          </p>
+        </div>
+      </div>
+
+      <div>
+        <p class="text-sm text-gray-400">Descripción</p>
+        <p class="text-gray-300">
+          {{ donacion.descripcion|default:"Sin descripción" }}
+        </p>
+      </div>
+
+      <div class="flex gap-3 pt-2">
+        <a href="{% url 'donaciones:detalle' donacion.id %}"
+           class="flex-1 bg-yellow-500 hover:bg-yellow-600 text-black py-2 rounded text-center text-sm">
+          Ver
+        </a>
+
+        <a href="{% url 'donaciones:editar' donacion.id %}"
+           class="flex-1 bg-violet-600 hover:bg-violet-700 text-white py-2 rounded text-center text-sm">
+          Editar
+        </a>
+
+        {% if donacion.estado == 'ACTIVA' %}
+        <a href="{% url 'donaciones:agregar_item' donacion.id %}"
+           class="flex-1 bg-cyan-600 hover:bg-cyan-700 text-white py-2 rounded text-center text-sm">
+          Items
+        </a>
+        {% endif %}
+      </div>
+
+    </div>
+    {% empty %}
+    <p class="text-gray-400 text-center">No hay donaciones</p>
+    {% endfor %}
+  </div>
+
+  <!-- PAGINACIÓN -->
+  {% if page_obj.has_other_pages %}
+    <div class="flex justify-center mt-8">
+        <nav class="flex items-center gap-2">
+
+            {% if page_obj.has_previous %}
+            <a href="?page={{ page_obj.previous_page_number }}&busqueda={{ busqueda }}&tipo={{ tipo }}&estado={{ estado }}"
+                class="px-3 py-2 rounded-lg bg-gray-700 hover:bg-gray-600 text-white">
+                ‹
+            </a>
+            {% endif %}
+
+            {% for num in page_obj.paginator.page_range %}
+            {% if page_obj.number == num %}
+            <span class="px-4 py-2 rounded-lg bg-pink-700 text-white font-semibold">
+                {{ num }}
+            </span>
+            {% else %}
+            <a href="?page={{ num }}&busqueda={{ busqueda }}&tipo={{ tipo }}&estado={{ estado }}"
+                class="px-4 py-2 rounded-lg bg-gray-800 hover:bg-gray-700 text-gray-200">
+                {{ num }}
+            </a>
+            {% endif %}
+            {% endfor %}
+
+            {% if page_obj.has_next %}
+            <a href="?page={{ page_obj.next_page_number }}&busqueda={{ busqueda }}&tipo={{ tipo }}&estado={{ estado }}"
+                class="px-3 py-2 rounded-lg bg-gray-700 hover:bg-gray-600 text-white">
+                ›
+            </a>
+            {% endif %}
+
+        </nav>
+    </div>
+    {% endif %}
+
+</div>
+{% endblock %}

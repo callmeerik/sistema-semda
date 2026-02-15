@@ -1,0 +1,114 @@
+{% extends 'base.html' %}
+{% block title %}Agregar Item{% endblock %}
+
+{% block content %}
+<div class="min-h-screen bg-linear-60 from-gray-900 via-gray-800 to-black p-6">
+
+    <div class="max-w-3xl mx-auto bg-gray-900/90 border border-pink-600 rounded-2xl p-6 space-y-8">
+
+        <h2 class="text-2xl text-gray-100 font-bold">
+            Agregar Item a Donación
+        </h2>
+
+        <div class="bg-white/5 rounded-xl p-4 text-gray-200 text-sm space-y-1">
+            <p>
+                <span class="text-gray-400">Donante:</span>
+                {% if donacion.donante.tipo_donante == 'NATURAL' %}
+                {{ donacion.donante.natural.nombre }} {{ donacion.donante.natural.apellido }}
+                {% else %}
+                {{ donacion.donante.juridico.razon_social }}
+                {% endif %}
+            </p>
+            <p>
+                <span class="text-gray-400">Fecha:</span>
+                {{ donacion.fecha_donacion }}
+            </p>
+        </div>
+
+        <form method="post" class="space-y-6">
+            {% csrf_token %}
+
+            <!-- CATEGORIA -->
+            <div class="space-y-1">
+                <label class="text-gray-300 text-sm font-medium">Categoría</label>
+                <select name="categoria" class="w-full bg-gray-800 text-white px-4 py-2 rounded-xl
+                 focus:outline-none focus:ring-2 focus:ring-pink-600 transition">
+                    <option value="">Seleccione categoría</option>
+                    {% for c in categorias %}
+                    <option value="{{ c.id }}">{{ c.nombre }}</option>
+                    {% endfor %}
+                </select>
+                {% if errores.categoria %}
+                <p class="text-red-400 text-sm">{{ errores.categoria }}</p>
+                {% endif %}
+            </div>
+
+            <!-- DESCRIPCIÓN -->
+            <div class="space-y-1">
+                <label class="text-gray-300 text-sm font-medium">Descripción</label>
+                <input type="text" name="descripcion" placeholder="Ej: Arroz blanco" class="w-full bg-gray-800 text-white px-4 py-2 rounded-xl
+                 focus:outline-none focus:ring-2 focus:ring-pink-600 transition">
+                {% if errores.descripcion %}
+                <p class="text-red-400 text-sm">{{ errores.descripcion }}</p>
+                {% endif %}
+            </div>
+
+            <!-- CANTIDAD -->
+            <div class="space-y-1">
+                <label class="text-gray-300 text-sm font-medium">Cantidad</label>
+                <input type="number" name="cantidad" min="1" placeholder="Ej: 10" class="w-full bg-gray-800 text-white px-4 py-2 rounded-xl
+                 focus:outline-none focus:ring-2 focus:ring-pink-600 transition">
+                {% if errores.cantidad %}
+                <p class="text-red-400 text-sm">{{ errores.cantidad }}</p>
+                {% endif %}
+            </div>
+
+            <!-- UNIDAD -->
+            <div class="space-y-1">
+                <label class="text-gray-300 text-sm font-medium">Unidad de medida</label>
+                <select name="unidad_medida" class="w-full bg-gray-800 text-white px-4 py-2 rounded-xl
+                 focus:outline-none focus:ring-2 focus:ring-pink-600 transition">
+                    <option value="">Seleccione unidad</option>
+                    <option value="UNIDAD">Unidades</option>
+                    <option value="KG">Kilogramos</option>
+                    <option value="LITRO">Litros</option>
+                    <option value="CAJA">Cajas</option>
+                </select>
+                {% if errores.unidad %}
+                <p class="text-red-400 text-sm">{{ errores.unidad }}</p>
+                {% endif %}
+            </div>
+
+            <div>
+                <label class="block text-gray-300 mb-1 font-semibold">
+                    Fecha de vencimiento (opcional)
+                </label>
+
+                <input type="date" name="fecha_vencimiento" value="{{ data.fecha_vencimiento }}" class="w-full bg-gray-800 text-white px-4 py-2 rounded-xl
+                border border-gray-700 outline-none
+                focus:ring-2 focus:ring-pink-600">
+
+                <p class="text-gray-500 text-sm mt-1">
+                    Solo si el ítem tiene caducidad
+                </p>
+            </div>
+
+
+            <!-- BOTONES -->
+            <div class="flex flex-col sm:flex-row gap-3 justify-end pt-4">
+                <a href="{% url 'donaciones:detalle' donacion.id %}" class="px-6 py-2 rounded-xl bg-gray-700 hover:bg-gray-600
+                  text-white text-center transition">
+                    Cancelar
+                </a>
+
+                <button class="px-6 py-2 rounded-xl bg-pink-700 hover:bg-pink-800
+                 text-white transition">
+                    Guardar Item
+                </button>
+            </div>
+
+        </form>
+
+    </div>
+</div>
+{% endblock %}

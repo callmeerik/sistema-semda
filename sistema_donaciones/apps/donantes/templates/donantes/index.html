@@ -1,0 +1,358 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}
+Donantes
+{% endblock %}
+
+{% block content %}
+<div class="min-h-screen bg-linear-60 from-gray-900 via-gray-800 to-black p-6">
+
+    <div class="max-w-7xl mx-auto space-y-8">
+
+        <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+            <h1 class="text-3xl font-bold text-gray-100">Donantes</h1>
+
+            <a href="{% url 'donantes:crear_donante' %}"
+                class="px-6 py-3 bg-pink-700 hover:bg-pink-800 text-white rounded-xl shadow text-center">
+                + Nuevo Donante
+            </a>
+        </div>
+
+        <form method="get" class="bg-gray-900/90 backdrop-blur rounded-2xl p-6 border border-gray-800 space-y-6">
+
+            <div class="flex flex-col sm:flex-row gap-3">
+                <input type="text" name="busqueda" value="{{ busqueda }}"
+                    placeholder="Buscar por nombre, email, cédula o RUC..." 
+                    class="flex-1 bg-gray-800 text-gray-100 px-5 py-3 rounded-xl
+                      focus:ring-2 focus:ring-pink-600 outline-none">
+
+                <button type="submit" class="px-6 py-3 bg-pink-700 hover:bg-pink-800 text-white rounded-xl">
+                    Buscar
+                </button>
+                {% if busqueda %}
+                    <a href="{% url 'donantes:index' %}"
+                        class="bg-gray-700 hover:bg-gray-600 px-5 rounded-lg flex items-center">
+                        Limpiar
+                    </a>
+                {% endif %}
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+
+                <div>
+                    <p class="text-gray-300 mb-2 font-semibold">Tipo de Donante</p>
+                    <div class="flex flex-wrap gap-6 text-gray-200">
+                        <label class="flex items-center gap-2 cursor-pointer">
+                            <input type="radio" name="tipo" value="ALL" {% if tipo == 'ALL' %}checked{% endif %}
+                                class="accent-pink-600">
+                            Todos
+                        </label>
+
+                        <label class="flex items-center gap-2 cursor-pointer">
+                            <input type="radio" name="tipo" value="NATURAL" {% if tipo == 'NATURAL' %}checked{% endif %}
+                                class="accent-pink-600">
+                            Natural
+                        </label>
+
+                        <label class="flex items-center gap-2 cursor-pointer">
+                            <input type="radio" name="tipo" value="JURIDICO" {% if tipo == 'JURIDICO' %}checked{% endif %}
+                                class="accent-pink-600">
+                            Jurídico
+                        </label>
+                    </div>
+                </div>
+
+                <div>
+                    <p class="text-gray-300 mb-2 font-semibold">Estado</p>
+                    <div class="flex flex-wrap gap-6 text-gray-200">
+            
+                        <label class="flex items-center gap-2 cursor-pointer">
+                            <input type="radio" name="estado" value="ACTIVO" {% if estado == 'ACTIVO' %}checked{% endif %}
+                                class="accent-pink-600">
+                            Activos
+                        </label>
+
+                        <label class="flex items-center gap-2 cursor-pointer">
+                            <input type="radio" name="estado" value="INACTIVO"
+                            {% if estado == 'INACTIVO' %}checked{%endif %} class="accent-pink-600">
+                            Inactivos
+                        </label>
+
+                        <label class="flex items-center gap-2 cursor-pointer">
+                            <input type="radio" name="estado" value="ALL" {% if estado == 'ALL' %}checked{% endif %}
+                                class="accent-pink-600">
+                            Todos
+                        </label>
+                    </div>
+                </div>
+
+            </div>
+
+            <p class="text-gray-400 text-sm">
+                Resultados encontrados:
+                <span class="font-semibold text-gray-200">{{ total }}</span>
+            </p>
+        </form>
+
+        <div class="hidden md:block backdrop-blur rounded-xl shadow-lg p-6">
+
+            <div class="overflow-x-auto">
+                <table class="min-w-full bg-gray-900 border border-gray-800 rounded-lg overflow-hidden">
+
+                    <thead>
+                        <tr class="text-center text-sm text-white">
+                            <th class="px-4 py-2">Nombre</th>
+                            <th class="px-4 py-2">Email</th>
+                            <th class="px-4 py-2">Identificación</th>
+                            <th class="px-4 py-2">Tipo</th>
+                            <th class="px-4 py-2 text-center">Acciones</th>
+                        </tr>
+                    </thead>
+
+                    <tbody>
+                        {% for d in donantes %}
+                        <tr class="hover:bg-gray-800/50 rounded-xl shadow-sm hover:shadow-md transition">
+
+                            <td class="px-4 py-3 font-medium text-white">
+                                {{d.nombre_donante}}
+                            </td>
+
+                            <td class="px-4 py-3 text-white">{{ d.email }}</td>
+
+                            <td class="px-4 py-3 text-white">
+                                {% if d.tipo_donante == 'NATURAL' %}
+                                {{ d.natural.cedula }}
+                                {% else %}
+                                {{ d.juridico.ruc }}
+                                {% endif %}
+                            </td>
+
+                            <td class="px-4 py-3">
+                                <span class="px-3 py-1 text-xs font-semibold rounded-full 
+                                {% if d.tipo_donante == 'NATURAL' %}
+                                bg-blue-100 text-blue-700
+                                {% else %}
+                                bg-purple-300 text-purple-900
+                                {% endif %}">
+                                    {{ d.tipo_donante }}
+                                </span>
+                            </td>
+
+                            <td class="px-4 py-3">
+                                <div class="flex justify-center gap-2">
+                                    <a href="{% url 'donantes:donante_detalle' d.id %}"
+                                        class="px-3 py-2 rounded-lg bg-violet-600 hover:bg-violet-800 text-white text-sm font-medium transition">
+                                        Ver
+                                    </a>
+
+                                    <a href="{% url 'donantes:editar_donante' d.id %}"
+                                        class="px-3 py-2 rounded-lg bg-blue-500 hover:bg-blue-600 text-white text-sm font-medium transition">
+                                        Editar
+                                    </a>
+                                    <form method="post" action="{% url 'donantes:toggle_estado' d.id %}"
+                                        class="form-toggle-estado">
+                                        {% csrf_token %}
+
+                                        {% if d.is_active %}
+                                        <button type="button" 
+                                            class="px-3 py-2 rounded-lg bg-red-700 hover:bg-red-800
+                                                    text-white text-sm font-medium transition"
+                                                    onclick="confirmEliminar(this)">
+                                            Desactivar
+                                        </button>
+                                        {% else %}
+                                        <button type="button"
+                                            class="px-3 py-2 rounded-lg bg-green-500 hover:bg-green-600
+                                                    text-white text-sm font-medium transition"
+                                            onclick="confirmEliminar(this)">
+                                            Activar
+                                        </button>
+                                        {% endif %}
+                                    </form>
+                                </div>
+                            </td>
+
+                        </tr>
+                        {% empty %}
+                        <tr>
+                            <td colspan="5" class="text-center py-6 text-gray-400">
+                                No hay donantes registrados
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+
+                </table>
+            </div>
+        </div>
+
+        <div class="md:hidden flex flex-wrap gap-4">
+
+            {% for d in donantes %}
+            <div class="w-full sm:w-[48%] bg-white/5 backdrop-blur
+               rounded-xl border border-pink-600
+               p-5 space-y-3 shadow">
+
+                <p class="text-lg font-semibold text-white">
+                    {% if d.tipo_donante == 'NATURAL' %}
+                    {{ d.natural.nombre }} {{ d.natural.apellido }}
+                    {% else %}
+                    {{ d.juridico.razon_social }}
+                    {% endif %}
+                </p>
+
+                <p class="text-gray-300 text-sm">
+                    {{ d.email }}
+                </p>
+
+                <p class="text-gray-300 text-sm">
+                    {% if d.tipo_donante == 'NATURAL' %}
+                    Cédula: {{ d.natural.cedula }}
+                    {% else %}
+                    RUC: {{ d.juridico.ruc }}
+                    {% endif %}
+                </p>
+
+                <span class="inline-block px-3 py-1 text-xs font-semibold rounded-full
+            {% if d.tipo_donante == 'NATURAL' %}
+                bg-blue-500/20 text-blue-300
+            {% else %}
+                bg-purple-500/20 text-purple-300
+            {% endif %}
+        ">
+                    {{ d.tipo_donante }}
+                </span>
+
+                <div class="pt-4 flex flex-wrap gap-2 justify-between">
+
+                    <a href="{% url 'donantes:donante_detalle' d.id %}" class="flex-1 text-center px-3 py-2 rounded-lg
+                      bg-yellow-400 hover:bg-yellow-500
+                      text-black text-sm font-medium">
+                        Ver
+                    </a>
+
+                    <a href="{% url 'donantes:editar_donante' d.id %}" class="flex-1 text-center px-3 py-2 rounded-lg
+                      bg-blue-500 hover:bg-blue-600
+                      text-white text-sm font-medium">
+                        Editar
+                    </a>
+                </div>
+
+                <form method="post" action="{% url 'donantes:toggle_estado' d.id %}" class="pt-2">
+                    {% csrf_token %}
+
+                    {% if d.is_active %}
+                    <button type="button"
+                        class="w-full px-3 py-2 rounded-lg
+                               bg-red-500 hover:bg-red-600
+                               text-white text-sm font-medium"
+                         onclick="confirmEliminar(this)">
+                        Desactivar
+                    </button>
+                    {% else %}
+                    <button type="button" 
+                        class="w-full px-3 py-2 rounded-lg
+                               bg-green-500 hover:bg-green-600
+                               text-white text-sm font-medium"
+                         onclick="confirmEliminar(this)">
+                        Activar
+                    </button>
+                    {% endif %}
+                </form>
+
+            </div>
+            {% endfor %}
+
+        </div>
+
+
+    </div>
+
+    {% if page_obj.has_other_pages %}
+    <div class="flex justify-center mt-8">
+        <nav class="flex items-center gap-2">
+
+            {% if page_obj.has_previous %}
+            <a href="?page={{ page_obj.previous_page_number }}&busqueda={{ busqueda }}&tipo={{ tipo }}&estado={{ estado }}"
+                class="px-3 py-2 rounded-lg bg-gray-700 hover:bg-gray-600 text-white">
+                ‹
+            </a>
+            {% endif %}
+
+            {% for num in page_obj.paginator.page_range %}
+            {% if page_obj.number == num %}
+            <span class="px-4 py-2 rounded-lg bg-pink-700 text-white font-semibold">
+                {{ num }}
+            </span>
+            {% else %}
+            <a href="?page={{ num }}&busqueda={{ busqueda }}&tipo={{ tipo }}&estado={{ estado }}"
+                class="px-4 py-2 rounded-lg bg-gray-800 hover:bg-gray-700 text-gray-200">
+                {{ num }}
+            </a>
+            {% endif %}
+            {% endfor %}
+
+            {% if page_obj.has_next %}
+            <a href="?page={{ page_obj.next_page_number }}&busqueda={{ busqueda }}&tipo={{ tipo }}&estado={{ estado }}"
+                class="px-3 py-2 rounded-lg bg-gray-700 hover:bg-gray-600 text-white">
+                ›
+            </a>
+            {% endif %}
+
+        </nav>
+    </div>
+    {% endif %}
+
+</div>
+
+{% endblock %}
+
+
+
+{% block confirm_modal %}
+<div id="confirmModal" class="fixed inset-0 bg-black/70 hidden items-center justify-center z-50">
+
+    <div class="bg-gray-900 border border-gray-700 rounded-2xl p-6 w-full max-w-md space-y-4">
+
+        <h2 id="confirmTitle" class="text-xl font-bold">
+            Confirmar acción
+        </h2>
+
+        <p id="confirmMessage" class="text-gray-300">
+            ¿Está seguro?
+        </p>
+
+        <div class="flex justify-end gap-3 pt-4">
+            <button onclick="closeConfirmModal()" class="px-4 py-2 bg-gray-600 hover:bg-gray-500 rounded-lg">
+                Cancelar
+            </button>
+
+            <button id="confirmActionBtn" class="px-4 py-2 bg-red-600 hover:bg-red-700 rounded-lg font-semibold">
+                Confirmar
+            </button>
+        </div>
+
+    </div>
+</div>
+{% endblock %}
+
+{% block confirm_modal_js %}
+<script src="{% static 'js/confirm_modal.js' %}"></script>
+{% endblock %}
+
+{% block js %}
+<script>
+function confirmEliminar(button) {
+    const form = button.closest('form');
+
+    openConfirmModal({
+        title: 'Confirmar acción',
+        message: '¿Está seguro de realizar esta acción?',
+        onConfirm: () => {
+            form.submit(); // 👈 POST real
+        }
+    });
+}
+</script>
+{% endblock %}

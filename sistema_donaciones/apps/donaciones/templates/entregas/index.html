@@ -1,0 +1,363 @@
+{% extends "base.html" %}
+
+{% block title %}Entregas{% endblock %}
+
+{% block content %}
+<div class="min-h-screen bg-linear-60 from-gray-900 via-gray-800 to-black p-6">
+
+  <div class="max-w-7xl mx-auto space-y-6">
+
+    <h1 class="text-2xl md:text-3xl font-bold text-white">
+      Entregas
+    </h1>
+
+    <form method="get"
+          class="bg-gray-900/90 backdrop-blur rounded-2xl p-6 border border-gray-800 space-y-6">
+
+      <div class="flex flex-col sm:flex-row gap-3">
+        <input type="text"
+               name="busqueda"
+               value="{{ busqueda }}"
+               placeholder="Buscar por ítem o beneficiario"
+               class="flex-1 bg-gray-800 text-gray-100 px-5 py-3 rounded-xl
+                      focus:ring-2 focus:ring-pink-600 outline-none">
+            
+        <button type="submit"
+                class="bg-pink-600 hover:bg-pink-700 text-white px-6 py-3 rounded-xl font-semibold transition">
+          Buscar
+        </button>
+        {% if busqueda %}
+            <a href="{% url 'casas_hogar:beneficiarios_index' %}"
+                class="bg-gray-700 hover:bg-gray-600 px-5 rounded-lg flex items-center">
+                Limpiar
+            </a>
+        {% endif %}
+      </div>
+
+      <div class="flex flex-wrap gap-4">
+        <label class="flex items-center gap-2 cursor-pointer">
+          <input type="radio" name="estado" value="ALL"
+                 {% if estado == "ALL" %}checked{% endif %}
+                 class="accent-pink-600">
+          <span class="text-gray-300">Todas</span>
+        </label>
+
+        <label class="flex items-center gap-2 cursor-pointer">
+          <input type="radio" name="estado" value="REGISTRADA"
+                 {% if estado == "REGISTRADA" %}checked{% endif %}
+                 class="accent-pink-600">
+          <span class="text-gray-300">Registradas</span>
+        </label>
+
+        <label class="flex items-center gap-2 cursor-pointer">
+          <input type="radio" name="estado" value="REALIZADA"
+                 {% if estado == "REALIZADA" %}checked{% endif %}
+                 class="accent-pink-600">
+          <span class="text-gray-300">Realizadas</span>
+        </label>
+
+        <label class="flex items-center gap-2 cursor-pointer">
+          <input type="radio" name="estado" value="ANULADA"
+                 {% if estado == "ANULADA" %}checked{% endif %}
+                 class="accent-pink-600">
+          <span class="text-gray-300">Anuladas</span>
+        </label>
+      </div>
+    </form>
+
+    <!-- TABLA DESKTOP -->
+    <div class="hidden md:block bg-gray-900/90 border border-gray-800 rounded-2xl p-6 overflow-x-auto">
+      <table class="w-full border-separate border-spacing-y-3">
+        <thead>
+          <tr class="text-gray-200 text-sm">
+            <th class="px-4 py-3 text-left">Ítem</th>
+            <th class="px-4 py-3 text-left">Beneficiario</th>
+            <th class="px-4 py-3 text-center">Cantidad</th>
+            <th class="px-4 py-3 text-center">Fecha</th>
+            <th class="px-4 py-3 text-center">Estado</th>
+            <th class="px-4 py-3 text-center">Acciones</th>
+          </tr>
+        </thead>
+
+        <tbody>
+          {% for e in entregas %}
+          <tr class="hover:bg-gray-800/50 transition">
+            <td class="px-4 py-3 text-white">
+              {{ e.item.descripcion }}
+            </td>
+
+            <td class="px-4 py-3 text-gray-300">
+                {% if e.beneficiario.tipo == "INSTITUCIONAL" %}
+                    {{ e.beneficiario.institucional.nombre_institucion }} 
+                {% else %}
+                    {{ e.benficiario.particular.primer_nombre }}
+                {% endif %}
+            </td>
+
+            <td class="px-4 py-3 text-center text-white">
+              {{ e.cantidad_entregada }} {{ e.item.unidad_medida }}
+            </td>
+
+            <td class="px-4 py-3 text-center text-white">
+              {{ e.fecha_entrega|date:"d/m/Y" }}
+            </td>
+
+            <td class="px-4 py-3 text-center">
+              <span class="px-3 py-1 rounded-full text-xs font-semibold
+                {% if e.estado == 'REALIZADA' %}bg-green-900/50 text-green-300 border border-green-700
+                {% elif e.estado == 'ANULADA' %}bg-red-900/50 text-red-300 border border-red-700
+                {% else %}bg-yellow-900/50 text-yellow-300 border border-yellow-700{% endif %}">
+                {{ e.estado }}
+              </span>
+            </td>
+
+            <td class="px-4 py-3 text-center space-x-2">
+              <a href="{% url 'donaciones:entrega_detalle' e.id %}"
+                 class="inline-block bg-blue-700 text-white hover:bg-blue-800 text-sm rounded-lg py-2 px-3 transition">
+                Ver
+              </a>
+
+              {% if e.estado == 'REGISTRADA' %}
+              <button data-id="{{ e.id }}"
+                      onclick="abrirModalRealizada(this)"
+                      class="bg-green-700 text-white hover:bg-green-800 text-sm rounded-lg py-2 px-3 transition">
+                Realizada
+              </button>
+
+              <button data-id="{{ e.id }}"
+                      onclick="abrirModalAnular(this)"
+                      class="bg-red-700 text-white hover:bg-red-800 text-sm rounded-lg py-2 px-3 transition">
+                Anular
+              </button>
+              {% endif %}
+            </td>
+          </tr>
+          {% empty %}
+          <tr>
+            <td colspan="6" class="text-center py-8 text-gray-400">
+              No hay entregas registradas
+            </td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+
+    <!-- VISTA MÓVIL -->
+    <div class="space-y-4 md:hidden">
+      {% for e in entregas %}
+      <div class="bg-gray-900/90 border border-gray-800 rounded-xl shadow p-4 space-y-3">
+        <div class="flex justify-between items-start">
+          <h3 class="font-semibold text-white">
+            {{ e.item.descripcion }}
+          </h3>
+          <span class="text-xs px-2 py-1 rounded-full
+            {% if e.estado == 'REALIZADA' %}bg-green-900/50 text-green-300 border border-green-700
+            {% elif e.estado == 'ANULADA' %}bg-red-900/50 text-red-300 border border-red-700
+            {% else %}bg-yellow-900/50 text-yellow-300 border border-yellow-700{% endif %}">
+            {{ e.estado }}
+          </span>
+        </div>
+
+        <div class="space-y-1 text-sm text-gray-300">
+          <p>
+            <span class="text-gray-400">Beneficiario:</span> 
+           {% if e.beneficiario.tipo == "INSTITUCIONAL" %}
+                    {{ e.beneficiario__institucional__nombre_institucion }} 
+                {% else %}
+                    {{ e.benficiario__particular__primer_nombre }}
+                {% endif %}
+          </p>
+
+          <p>
+            <span class="text-gray-400">Cantidad:</span> 
+            {{ e.cantidad_entregada }} {{ e.item.unidad_medida }}
+          </p>
+
+          <p>
+            <span class="text-gray-400">Fecha:</span> 
+            {{ e.fecha_entrega|date:"d/m/Y" }}
+          </p>
+        </div>
+
+        <div class="flex gap-2 pt-2">
+          <a href="{% url 'donaciones:entrega_detalle' e.id %}"
+             class="flex-1 text-center bg-blue-700 hover:bg-blue-800 text-white rounded-lg py-2 px-3 text-sm font-medium transition">
+            Ver
+          </a>
+
+          {% if e.estado == 'REGISTRADA' %}
+          <button data-id="{{ e.id }}"
+                  onclick="abrirModalRealizada(this)"
+                  class="flex-1 bg-green-700 text-white hover:bg-green-800 font-medium rounded-lg py-2 px-3 text-sm transition">
+            Realizada
+          </button>
+
+          <button data-id="{{ e.id }}"
+                  onclick="abrirModalAnular(this)"
+                  class="flex-1 bg-red-700 hover:bg-red-800 text-white font-medium rounded-lg py-2 px-3 text-sm transition">
+            Anular
+          </button>
+          {% endif %}
+        </div>
+      </div>
+      {% empty %}
+      <div class="text-center py-8 text-gray-400">
+        No hay entregas registradas
+      </div>
+      {% endfor %}
+    </div>
+  </div>
+
+  {% if entregas.has_other_pages %}
+    <div class="flex justify-center mt-8">
+        <nav class="flex items-center gap-2">
+
+            {% if entregas.has_previous %}
+            <a href="?page={{ entregas.previous_page_number }}&busqueda={{ busqueda }}&tipo={{ tipo }}&estado={{ estado }}"
+                class="px-3 py-2 rounded-lg bg-gray-700 hover:bg-gray-600 text-white">
+                ‹
+            </a>
+            {% endif %}
+
+            {% for num in entregas.paginator.page_range %}
+            {% if entregas.number == num %}
+            <span class="px-4 py-2 rounded-lg bg-pink-700 text-white font-semibold">
+                {{ num }}
+            </span>
+            {% else %}
+            <a href="?page={{ num }}&busqueda={{ busqueda }}&tipo={{ tipo }}&estado={{ estado }}"
+                class="px-4 py-2 rounded-lg bg-gray-800 hover:bg-gray-700 text-gray-200">
+                {{ num }}
+            </a>
+            {% endif %}
+            {% endfor %}
+
+            {% if entregas.has_next %}
+            <a href="?page={{ entregas.next_page_number }}&busqueda={{ busqueda }}&tipo={{ tipo }}&estado={{ estado }}"
+                class="px-3 py-2 rounded-lg bg-gray-700 hover:bg-gray-600 text-white">
+                ›
+            </a>
+            {% endif %}
+
+        </nav>
+    </div>
+    {% endif %}
+
+</div>
+
+<!-- Modal anular entrega -->
+<div id="modalAnular"
+     class="fixed inset-0 hidden items-center justify-center bg-black/70 z-50 p-4">
+  <div class="bg-gray-800 border border-gray-700 rounded-xl p-6 w-full max-w-md space-y-4">
+    <h2 class="text-xl font-bold text-white">
+      Anular entrega
+    </h2>
+
+    <form id="formAnular" method="post" class="space-y-4">
+      {% csrf_token %}
+      <div>
+        <label class="block text-sm text-gray-300 mb-2">Motivo de anulación *</label>
+        <textarea name="motivo" 
+                  required
+                  rows="4"
+                  placeholder="Explique el motivo de la anulación..."
+                  class="w-full bg-gray-900 text-white border border-gray-700 rounded-lg px-4 py-3 
+                         focus:ring-2 focus:ring-pink-600 outline-none resize-none"></textarea>
+      </div>
+
+      <div class="flex justify-end gap-3">
+        <button type="button"
+                onclick="cerrarModales()"
+                class="px-5 py-2 bg-gray-700 hover:bg-gray-600 text-white rounded-lg transition">
+          Cancelar
+        </button>
+        <button type="submit"
+                class="px-5 py-2 bg-red-700 hover:bg-red-800 text-white rounded-lg transition">
+          Anular Entrega
+        </button>
+      </div>
+    </form>
+  </div>
+</div>
+
+
+<!-- Modal marcar realizada entrega -->
+<div id="modalRealizada"
+     class="fixed inset-0 hidden items-center justify-center bg-black/70 z-50 p-4">
+  <div class="bg-gray-950 border rounded-xl p-6 w-full max-w-md space-y-4">
+    <h2 class="text-xl font-bold text-white">
+      Marcar entrega como realizada
+    </h2>
+
+    <form id="formRealizada" method="post" class="space-y-4">
+      {% csrf_token %}
+      <div>
+        <label class="block text-sm text-gray-300 mb-2">Persona que recibió *</label>
+        <input type="text" 
+               name="recibida_por" 
+               required
+               maxlength="100"
+               placeholder="Nombre completo de quien recibió"
+               class="w-full bg-gray-900 text-white border border-gray-700 rounded-lg px-4 py-3
+                      focus:ring-2 focus:ring-pink-600 outline-none">
+      </div>
+
+      <div class="flex justify-end gap-3">
+        <button type="button"
+                onclick="cerrarModales()"
+                class="px-5 py-2 bg-gray-700 hover:bg-gray-600 text-white rounded-lg transition">
+          Cancelar
+        </button>
+        <button type="submit"
+                class="px-5 py-2 bg-green-700 hover:bg-green-800 text-white rounded-lg transition">
+          Confirmar Entrega
+        </button>
+      </div>
+    </form>
+  </div>
+</div>
+{% endblock %}
+
+{% block js %}
+<script>
+function abrirModalAnular(btn) {
+  const id = btn.dataset.id;
+  const modal = document.getElementById('modalAnular');
+  const form = document.getElementById('formAnular');
+  form.action = "{% url 'donaciones:anular_entrega' 0 %}".replace("0", id);
+  modal.classList.remove('hidden');
+  modal.classList.add('flex');
+} 
+
+function abrirModalRealizada(btn) {
+  const id = btn.dataset.id;
+  const modal = document.getElementById('modalRealizada');
+  const form = document.getElementById('formRealizada');
+  form.action = "{% url 'donaciones:entrega_realizada' 0 %}".replace("0", id);
+  modal.classList.remove('hidden');
+  modal.classList.add('flex');
+}
+
+function cerrarModales() {
+  document.getElementById('modalAnular').classList.add('hidden');
+  document.getElementById('modalAnular').classList.remove('flex');
+  document.getElementById('modalRealizada').classList.add('hidden');
+  document.getElementById('modalRealizada').classList.remove('flex');
+}
+
+// Cerrar modal al hacer clic fuera
+document.getElementById('modalAnular').addEventListener('click', function(e) {
+  if (e.target === this) {
+    cerrarModales();
+  }
+});
+
+document.getElementById('modalRealizada').addEventListener('click', function(e) {
+  if (e.target === this) {
+    cerrarModales();
+  }
+});
+</script>
+
+{% endblock %}

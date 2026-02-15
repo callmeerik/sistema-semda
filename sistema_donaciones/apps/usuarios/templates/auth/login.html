@@ -1,0 +1,72 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}
+Iniciar Sesión
+{% endblock %}
+
+{% block content %}
+<div class="h-full w-full bg-linear-60 from-gray-900 via-gray-800 to-black flex items-center justify-center">
+    <div class="w-xl max-w-md bg-white/10 rounded-xl shadow-2xl p-8 sm:p-10 border mx-auto">
+        <div class="text-center mb-8">
+            <img src="{% static 'images/logo2.png' %}" alt="logo fundacion semda" class="w-20 h-16 mx-auto">
+            <h2 class="text-xl font-extrabold text-gray-200">
+                Acceso al Sistema Gestión SEMDA
+            </h2>
+            <p class="mt-2 text-sm text-gray-200">
+                Introduce tus credenciales para continuar.
+            </p>
+        </div>
+
+        <form method="post" action="#" class="space-y-6">
+            {% csrf_token %}
+
+            {% if errores.auth %}
+            <div class="p-3 rounded mb-3 bg-red-900 border-2 border-red-900 text-red-100">
+                <p>{{ errores.auth }}</p>
+            </div>
+            {% endif %}
+
+            <div>
+                <label for="username" class="block text-sm font-bold text-gray-100 mb-1">
+                    Usuario
+                </label>
+                <input id="username" name="username" type="text" required
+                    class="text-indigo-200 appearance-none block w-full px-4 py-2 border border-gray-300 rounded-lg shadow-sm placeholder-gray-400 focus:outline-none focus:ring-pink-500 focus:border-pink-500 transition duration-150"
+                    placeholder="Nombre usuario o cédula">
+            </div>
+
+            <div>
+                <label for="password" class="block text-sm font-bold text-gray-100 mb-1">
+                    Contraseña
+                </label>
+                <input id="password" name="password" type="password" required
+                    class="text-indigo-100 appearance-none block w-full px-4 py-2 border border-gray-300 rounded-lg shadow-sm placeholder-gray-400 focus:outline-none focus:ring-pink-500 focus:border-pink-500 transition duration-150"
+                    placeholder="••••••••">
+            </div>
+
+            <!-- Opciones Adicionales -->
+            <div class="flex items-center justify-between">
+                <div class="text-sm">
+                    <a href="{% url 'usuarios:password_reset' %}" class="font-medium text-indigo-500 hover:text-indigo-500">
+                        ¿Olvidaste tu contraseña?
+                    </a>
+                </div>
+            </div>
+            <div>
+                <button type="submit"
+                    class="w-full flex justify-center py-3 px-4 border border-transparent rounded-lg shadow-lg text-lg font-medium text-white bg-pink-700 hover:bg-pink-800 cursor-pointer focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 transition duration-200 transform hover:scale-[1.01]">
+                    <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"
+                        xmlns="http://www.w3.org/2000/svg">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M11 16l-4-4m0 0l4-4m-4 4h14m-5 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h7a3 3 0 013 3v1">
+                        </path>
+                    </svg>
+                    Iniciar Sesión
+                </button>
+            </div>
+        </form>
+
+    </div>
+</div>
+{% endblock %}

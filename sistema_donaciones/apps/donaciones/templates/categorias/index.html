@@ -1,0 +1,140 @@
+{% extends 'base.html' %}
+
+{% block title %}Categorías{% endblock %}
+
+{% block content %}
+<div class="min-h-screen bg-linear-60 from-gray-900 via-gray-800 to-black p-6">
+
+  <div class="flex justify-between items-center mb-6">
+    <h2 class="text-3xl font-bold text-gray-100">Categorías</h2>
+
+    <button onclick="openModal()"
+      class="bg-pink-700 hover:bg-pink-800 text-white px-5 py-2 rounded">
+      + Nueva Categoría
+    </button>
+  </div>
+
+  <div class="hidden md:block overflow-x-auto">
+    <table class="min-w-full bg-gray-900 border border-gray-800 rounded-lg overflow-hidden">
+      <thead class="bg-gray-800 text-gray-200 text-sm uppercase">
+        <tr>
+          <th class="px-4 py-3 text-left">Nombre</th>
+          <th class="px-4 py-3 text-left">Descripción</th>
+          <th class="px-4 py-3 text-center">Estado</th>
+          <th class="px-4 py-3 text-center">Acción</th>
+        </tr>
+      </thead>
+      <tbody class="divide-y divide-gray-800">
+        {% for c in categorias %}
+        <tr class="hover:bg-gray-800/50">
+          <td class="px-4 py-3 text-gray-100 font-medium">{{ c.nombre }}</td>
+          <td class="px-4 py-3 text-gray-300">
+            {{ c.descripcion|default:"—" }}
+          </td>
+          <td class="px-4 py-3 text-center">
+            {% if c.is_active %}
+              <span class="text-green-400 font-semibold">Activa</span>
+            {% else %}
+              <span class="text-red-400 font-semibold">Inactiva</span>
+            {% endif %}
+          </td>
+          <td class="px-4 py-3 text-center">
+            <form method="post" action="{% url 'donaciones:cambiar_estado_categoria' c.id %}">
+              {% csrf_token %}
+              <button type="submit"
+                class="px-3 py-1 rounded text-sm
+                {% if c.is_active %}
+                  bg-gray-700 hover:bg-gray-600 text-white
+                {% else %}
+                  bg-green-700 hover:bg-green-800 text-white
+                {% endif %}">
+                {% if c.is_active %}Desactivar{% else %}Activar{% endif %}
+              </button>
+            </form>
+          </td>
+        </tr>
+        {% empty %}
+        <tr>
+          <td colspan="4" class="px-4 py-6 text-center text-gray-400">
+            No hay categorías registradas
+          </td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+
+  <!-- MOBILE -->
+  <div class="md:hidden flex flex-col gap-4">
+    {% for c in categorias %}
+    <div class="bg-gray-900/60 border border-pink-600/40 rounded-xl p-4 space-y-2">
+      <h3 class="text-lg text-white font-semibold">{{ c.nombre }}</h3>
+      <p class="text-gray-400 text-sm">{{ c.descripcion|default:"Sin descripción" }}</p>
+
+      <div class="flex justify-between items-center pt-2">
+        <span class="{% if c.is_active %}text-green-400{% else %}text-red-400{% endif %}">
+          {% if c.is_active %}Activa{% else %}Inactiva{% endif %}
+        </span>
+
+        <form method="post" action="{% url 'donaciones:cambiar_estado_categoria' c.id %}">
+          {% csrf_token %}
+          <button type="submit"
+            class="px-4 py-1 rounded text-sm bg-pink-700 hover:bg-pink-800 text-white">
+            Cambiar estado
+          </button>
+        </form>
+      </div>
+    </div>
+    {% endfor %}
+  </div>
+</div>
+
+<!-- MODAL -->
+<div id="modal"
+  class="fixed inset-0 bg-black/70 hidden items-center justify-center z-50">
+
+  <div class="bg-gray-900 border border-gray-800 rounded-xl w-full max-w-md p-6 space-y-4">
+    <h3 class="text-xl font-bold text-gray-100">Nueva Categoría</h3>
+
+    <form method="post" action="{% url 'donaciones:crear_categoria' %}" class="space-y-4">
+      {% csrf_token %}
+
+      <div>
+        <label class="text-gray-300 text-sm">Nombre *</label>
+        <input type="text" name="nombre" required
+          class="w-full bg-gray-800 text-white px-4 py-2 rounded focus:ring-2 focus:ring-pink-600">
+      </div>
+
+      <div>
+        <label class="text-gray-300 text-sm">Descripción</label>
+        <textarea name="descripcion" rows="3"
+          class="w-full bg-gray-800 text-white px-4 py-2 rounded resize-none"></textarea>
+      </div>
+
+      <div class="flex justify-end gap-3">
+        <button type="button" onclick="closeModal()"
+          class="px-4 py-2 bg-gray-700 text-white rounded hover:bg-gray-600">
+          Cancelar
+        </button>
+
+        <button type="submit"
+          class="px-5 py-2 bg-pink-700 text-white rounded hover:bg-pink-800">
+          Guardar
+        </button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<script>
+  function openModal() {
+    document.getElementById('modal').classList.remove('hidden')
+    document.getElementById('modal').classList.add('flex')
+  }
+
+  function closeModal() {
+    document.getElementById('modal').classList.add('hidden')
+    document.getElementById('modal').classList.remove('flex')
+  }
+</script>
+{% endblock %}

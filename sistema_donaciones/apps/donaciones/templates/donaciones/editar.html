@@ -1,0 +1,56 @@
+{% extends 'base.html' %}
+
+{% block title %}Editar Donación{% endblock %}
+
+{% block content %}
+<div class="min-h-screen bg-linear-60 from-gray-900 via-gray-800 to-black p-8">
+  <div class="max-w-4xl mx-auto bg-gray-900 p-8 rounded-xl border border-gray-800 space-y-6">
+
+    <h2 class="text-2xl text-gray-100 font-bold">Editar Donación</h2>
+
+    <form method="post" class="space-y-6">
+      {% csrf_token %}
+
+      <div>
+        <select name="donante"
+          class="w-full bg-gray-800 text-white px-4 py-2 rounded">
+          <option value="">Seleccione donante</option>
+          {% for donante in donantes %}
+            <option value="{{ donante.id }}"
+              {% if donante.id == donacion.donante_id %}selected{% endif %}>
+              {% if donante.tipo_donante == 'NATURAL' %}
+                {{ donante.natural.nombre }} {{ donante.natural.apellido }}
+              {% else %}
+                {{ donante.juridico.razon_social }}
+              {% endif %}
+            </option>
+          {% endfor %}
+        </select>
+        {% if errores.donante %}
+          <p class="text-red-400 text-sm mt-1">{{ errores.donante }}</p>
+        {% endif %}
+      </div>
+
+      <!-- FECHA -->
+       <div>
+            <input type="date" name="fecha_donacion"
+            value="{{ donacion.fecha_donacion|date:'Y-m-d' }}"
+            class="w-full bg-gray-800 text-white px-4 py-2 rounded"
+            readonly>
+       </div>
+      
+      <textarea name="descripcion"
+        class="w-full bg-gray-800 text-white px-4 py-2 rounded"
+        rows="3">{{ donacion.descripcion }}
+      </textarea>
+      
+      <button
+        class="bg-pink-700 hover:bg-pink-800 text-white px-6 py-2 rounded">
+        Guardar cambios
+      </button>
+
+    </form>
+
+  </div>
+</div>
+{% endblock %}

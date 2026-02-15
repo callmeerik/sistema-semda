@@ -1,0 +1,194 @@
+{% extends "base.html" %}
+
+{% block title %}Usuarios{% endblock %}
+
+{% block content %}
+<div class="min-h-screen bg-gray-900 text-white p-6">
+
+    <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+        <h1 class="text-3xl font-bold text-gray-100">Usuarios</h1>
+
+            <a href="{% url 'usuarios:crear' %}"
+                class="px-6 py-3 bg-pink-700 hover:bg-pink-800 text-white rounded-xl shadow text-center">
+                + Nuevo Usuario
+            </a>
+    </div>
+
+    <form method="GET"
+        class="bg-gray-900/90 backdrop-blur rounded-2xl p-6 border border-gray-800 space-y-6">
+    
+        <div class="flex flex-col sm:flex-row gap-3">
+            <input type="text"
+                name="busqueda"
+                value="{{ busqueda }}"
+                placeholder="Buscar por nombre, usuario, cédula o correo"
+                class="flex-1 bg-gray-800 text-gray-100 px-5 py-3 rounded-xl
+                            focus:ring-2 focus:ring-pink-600 outline-none">
+           
+            <button type="submit"
+                class="bg-pink-700 hover:bg-pink-800 px-4 py-2 rounded-lg">
+                Buscar
+            </button>
+            {% if busqueda %}
+            <a href="{% url 'casas_hogar:beneficiarios_index' %}"
+                class="bg-gray-700 hover:bg-gray-600 px-5 rounded-lg flex items-center">
+                Limpiar
+            </a>
+        {% endif %}
+    </div>
+   
+    <div class="flex flex-wrap gap-4 text-sm">
+      <label class="flex items-center gap-2">
+        <input type="radio" name="estado" value="ACTIVOS"
+               {% if estado == 'ACTIVOS' %}checked{% endif %}
+               class="accent-pink-600">
+        Activos
+      </label>
+
+      <label class="flex items-center gap-2">
+        <input type="radio" name="estado" value="INACTIVOS"
+               {% if estado == 'INACTIVOS' %}checked{% endif %}
+               class="accent-pink-600">
+        Inactivos
+      </label>
+
+      <label class="flex items-center gap-2">
+        <input type="radio" name="estado" value="TODOS"
+               {% if estado == 'TODOS' %}checked{% endif %}
+               class="accent-pink-600">
+        Todos
+      </label>
+    </div>
+
+    
+  </form>
+
+  <!-- ================== DESKTOP ================== -->
+  <div class="hidden md:block backdrop-blur rounded-xl shadow-lg p-6">
+    <table class="min-w-full border-separate border-spacing-y-3">
+      <thead class="bg-gray-800">
+        <tr class="text-center text-sm text-white">
+          <th class="p-3">Usuario</th>
+          <th class="p-3">Nombre completo</th>
+          <th class="p-3">Cédula</th>
+          <th class="p-3">Correo</th>
+          <th class="p-3">Rol</th>
+          <th class="p-3 text-center">Estado</th>
+          <th class="p-3 text-center">Acciones</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for u in usuarios %}
+        <tr class="border-t border-gray-700 hover:bg-gray-800 text-sm">
+          <td class="p-3">{{ u.username }}</td>
+          <td class="p-3">
+            {{ u.primer_nombre }} {% if u.segundo_nombre %} {{u.segundo_nombre}} {% endif %}
+            {{ u.primer_apellido }} {% if u.segundo_apellido %} {{u.segundo_apellido}} {% endif %}
+          </td>
+          <td class="p-3">{{ u.cedula }}</td>
+          <td class="p-3">{{ u.email }}</td>
+          <td class="p-3">{{ u.rol }}</td>
+          <td class="p-3 text-center">
+            {% if u.is_active %}
+              <span class="text-green-700 px-2 py-1 rounded text-xs">Activo</span>
+            {% else %}
+              <span class="text-red-700 px-2 py-1 rounded text-xs">Inactivo</span>
+            {% endif %}
+          </td>
+          <td class="p-3 flex gap-2 justify-center">
+            <a href="{% url 'usuarios:editar' u.id %}"
+               class="bg-yellow-600 hover:bg-yellow-700 px-3 py-1 rounded text-xs">
+              Editar
+            </a>
+
+            <form method="post"
+                  action="{% url 'usuarios:toggle_estado' u.id %}">
+              {% csrf_token %}
+              <button type="submit"
+                      class="bg-gray-700 hover:bg-gray-600 px-3 py-1 rounded text-xs cursor-pointer">
+                {% if u.is_active %}Desactivar{% else %}Activar{% endif %}
+              </button>
+            </form>
+          </td>
+        </tr>
+        {% empty %}
+        <tr>
+          <td colspan="7" class="p-4 text-center text-gray-400">
+            No hay usuarios registrados
+          </td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+
+  <!-- ================== MÓVIL ================== -->
+  <div class="md:hidden space-y-4">
+    {% for u in usuarios %}
+    <div class="bg-gray-800 border border-pink-700 rounded-xl p-4 space-y-2">
+      <h2 class="font-bold text-lg">
+        {{ u.primer_nombre }} {{ u.primer_apellido }}
+      </h2>
+
+      <p class="text-sm">👤 {{ u.username }}</p>
+      <p class="text-sm">🪪 {{ u.cedula }}</p>
+      <p class="text-sm">🧩 {{ u.rol }}</p>
+
+      <p class="text-sm">
+        Estado:
+        {% if u.is_active %}
+          <span class="text-green-400">Activo</span>
+        {% else %}
+          <span class="text-red-400">Inactivo</span>
+        {% endif %}
+      </p>
+
+      <div class="flex gap-2 pt-2">
+        <a href="{% url 'usuarios:editar' u.id %}"
+           class="flex-1 bg-yellow-600 hover:bg-yellow-700 py-2 rounded text-center text-sm">
+          Editar
+        </a>
+
+        <form method="post"
+              action="{% url 'usuarios:toggle_estado' u.id %}"
+              class="flex-1">
+          {% csrf_token %}
+          <button type="submit"
+                  class="w-full bg-gray-700 hover:bg-gray-600 py-2 rounded text-sm">
+            {% if u.is_active %}Desactivar{% else %}Activar{% endif %}
+          </button>
+        </form>
+      </div>
+    </div>
+    {% empty %}
+    <p class="text-center text-gray-400">
+      No hay usuarios registrados
+    </p>
+    {% endfor %}
+  </div>
+
+  <!-- ================== PAGINACIÓN ================== -->
+  {% if usuarios.paginator.num_pages > 1 %}
+  <div class="flex justify-center items-center gap-4 mt-6 text-sm">
+    {% if usuarios.has_previous %}
+      <a href="?page={{ usuarios.previous_page_number }}&search={{ search }}&estado={{ estado }}"
+         class="px-3 py-1 bg-gray-700 hover:bg-gray-600 rounded">
+        Anterior
+      </a>
+    {% endif %}
+
+    <span class="text-gray-300">
+      Página {{ usuarios.number }} de {{ usuarios.paginator.num_pages }}
+    </span>
+
+    {% if usuarios.has_next %}
+      <a href="?page={{ usuarios.next_page_number }}&search={{ search }}&estado={{ estado }}"
+         class="px-3 py-1 bg-gray-700 hover:bg-gray-600 rounded">
+        Siguiente
+      </a>
+    {% endif %}
+  </div>
+  {% endif %}
+
+</div>
+{% endblock %}

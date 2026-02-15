@@ -1,0 +1,146 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block title %}Detalle Donante{% endblock %}
+
+{% block content %}
+<div class="min-h-screen bg-linear-60 from-gray-900 via-gray-800 to-black p-8">
+
+    <div class="max-w-4xl mx-auto bg-gray-900 border border-gray-800 rounded-xl p-8 space-y-6">
+
+        <!-- HEADER -->
+        <div class="flex justify-between items-center">
+            <h2 class="text-2xl font-bold text-white">
+                Detalle del Donante
+            </h2>
+
+            <a href="{% url 'donantes:index' %}" class="text-sm text-gray-400 hover:text-pink-500">
+                ← Volver
+            </a>
+        </div>
+
+        <!-- Datos generales -->
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6 text-gray-200">
+
+            <div>
+                <p class="text-gray-400 text-sm">Nombre</p>
+                <p class="font-semibold">
+                    {{ donante.nombre_donante }}
+                </p>
+            </div>
+
+            <div>
+                <p class="text-gray-400 text-sm">Tipo</p>
+                <span class="px-3 py-1 rounded text-sm
+                    {% if donante.tipo_donante == 'NATURAL' %}
+                        bg-blue-600/20 text-blue-400
+                    {% else %}
+                        bg-purple-600/20 text-purple-400
+                    {% endif %}
+                ">
+                    {{ donante.tipo_donante }}
+                </span>
+            </div>
+
+            <div>
+                <p class="text-gray-400 text-sm">Email</p>
+                <p>{{ donante.email }}</p>
+            </div>
+
+            <div>
+                <p class="text-gray-400 text-sm">Teléfono</p>
+                <p>{{ donante.telefono|default:"—" }}</p>
+            </div>
+
+            <div class="md:col-span-2">
+                <p class="text-gray-400 text-sm">Dirección</p>
+                <p>{{ donante.direccion|default:"—" }}</p>
+            </div>
+
+        </div>
+
+        <!-- SEPARADOR -->
+        <hr class="border-gray-800">
+
+        <!-- DATOS ESPECIFICOS -->
+        {% if donante.tipo_donante == 'NATURAL' %}
+        <div class="space-y-4 text-gray-200">
+            <h3 class="text-lg font-semibold text-white">Datos Personales</h3>
+
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                <div>
+                    <p class="text-gray-400 text-sm">Nombre</p>
+                    <p>{{ donante.natural.nombre }}</p>
+                </div>
+                <div>
+                    <p class="text-gray-400 text-sm">Apellido</p>
+                    <p>{{ donante.natural.apellido }}</p>
+                </div>
+                <div>
+                    <p class="text-gray-400 text-sm">Cédula</p>
+                    <p>{{ donante.natural.cedula }}</p>
+                </div>
+            </div>
+        </div>
+        {% else %}
+        <div class="space-y-4 text-gray-200">
+            <h3 class="text-lg font-semibold text-white">Datos Jurídicos</h3>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div>
+                    <p class="text-gray-400 text-sm">Razón Social</p>
+                    <p>{{ donante.juridico.razon_social }}</p>
+                </div>
+                <div>
+                    <p class="text-gray-400 text-sm">RUC</p>
+                    <p>{{ donante.juridico.ruc }}</p>
+                </div>
+
+                <div>
+                    <p class="text-gray-400 text-sm">Representante</p>
+                    <p>
+                        {{ donante.juridico.nombre_representante }}
+                        {{ donante.juridico.apellido_representante }}
+                    </p>
+                </div>
+            </div>
+        </div>
+        {% endif %}
+
+        <!-- ACCIONES -->
+        <div class="flex justify-end gap-3 pt-6">
+            <a href="{% url 'donantes:editar_donante' donante.id %}"
+                class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded">
+                Editar
+            </a>
+
+            <form 
+                method="post"
+                action="{% url 'donantes:toggle_estado' donante.id %}"
+                class="form-toggle-estado"      
+            >
+                {% csrf_token %}
+
+                {% if donante.is_active %}
+                <button type="submit" class="px-3 py-2 rounded-lg bg-red-500 hover:bg-red-600
+                                                    text-white text-sm font-medium transition">
+                    Desactivar
+                </button>
+                {% else %}
+                <button type="submit" class="px-3 py-2 rounded-lg bg-green-500 hover:bg-green-600
+                                                    text-white text-sm font-medium transition">
+                    Activar
+                </button>
+                {% endif %}
+            </form>
+
+
+        </div>
+
+    </div>
+</div>
+{% endblock %}
+
+
+{% block js %}
+<script src="{% static 'donantes/js/activar_donante.js' %}"></script>
+{% endblock %}

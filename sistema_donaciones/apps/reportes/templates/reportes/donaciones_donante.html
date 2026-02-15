@@ -1,0 +1,112 @@
+{% extends "base.html" %}
+
+{% block title %}Reporte de Donaciones por Donante{% endblock %}
+
+{% block content %}
+<div class="min-h-screen bg-linear-60 from-gray-900 via-gray-800 to-black p-6">
+  <div class="max-w-7xl mx-auto space-y-6">
+
+    <h1 class="text-2xl md:text-3xl font-bold text-white">
+      Donaciones por Donante y Fecha
+    </h1>
+
+    <form method="get" class="mb-6 max-w-md">
+        <div class="flex gap-2">
+            <input
+                type="text"
+                name="busqueda"
+                value="{{ search }}"
+                placeholder="Buscar casa hogar..."
+                class="flex-1 bg-gray-800 border border-gray-700 px-4 py-2 rounded-lg
+                    text-white focus:ring-2 focus:ring-pink-600 outline-none"
+            >
+            <button
+                type="submit"
+                class="bg-pink-700 hover:bg-pink-800 px-5 rounded-lg text-white">
+                Buscar
+            </button>
+            {% if search %}
+            <a href="{% url 'reportes:entregas_casa_fecha' %}"
+                class="bg-gray-700 hover:bg-gray-600 px-5 rounded-lg flex items-center">
+                Limpiar
+            </a>
+            {% endif %}
+        </div>
+    </form>
+
+    <div class="hidden md:block bg-white dark:bg-gray-800 rounded-xl shadow overflow-x-auto">
+      <table class="w-full text-sm">
+        <thead class="bg-gray-800 text-gray-300">
+          <tr>
+            <th class="px-4 py-3 text-left">Donante</th>
+            <th class="px-4 py-3 text-left">Descripción</th>    
+            <th class="px-4 py-3 text-center">Fecha</th>
+            <th class="px-4 py-3 text-center">Total Items</th>
+            <th class="px-4 py-3 text-center">Reporte</th>
+          </tr>
+        </thead>
+        <tbody class="divide-y divide-gray-900 text-white">
+          {% for r in registros %}
+          <tr class="border-t border-gray-700 bg-gray-900 hover:bg-gray-800/40">
+            <td class="px-4 py-3 text-white font-medium">
+                {% if r.donante__juridico__razon_social %}
+                    {{ r.donante__juridico__razon_social }}
+                {% else %}
+                    {{ r.donante__natural__nombre }} {{ r.donante__natural__apellido }}
+                {% endif %}
+            </td>
+            <td class="px-4 py-3 text-left">
+                {{ r.descripcion }}
+            </td>
+            <td class="px-4 py-3 text-center">
+              {{ r.fecha_donacion|date:"d/m/Y" }}
+            </td>
+
+            <td class="px-4 py-3 text-center">
+              {{ r.total_donaciones }}
+            </td>
+
+            <td class="px-4 py-3 text-center">
+              <a href="{% url 'reportes:donaciones_donante_fecha_pdf' r.donante_id r.fecha_donacion|date:'Y-m-d' %}"
+                 target="_blank"
+                 class="bg-blue-800 hover:bg-blue-950 text-white px-3 py-2 rounded-lg text-sm">
+                📋 Generar PDF
+              </a>
+            </td>
+          </tr>
+          {% empty %}
+          <tr>
+            <td colspan="4" class="text-center py-6 text-gray-400">
+              No hay registros
+            </td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+
+    <!-- CARDS MOBILE -->
+    <div class="md:hidden space-y-4">
+      {% for r in registros %}
+      <div class="bg-white dark:bg-gray-800 rounded-xl shadow p-4 space-y-2">
+        <p class="font-semibold text-gray-800 dark:text-white">
+          Donante ID: {{ r.donante_id }}
+        </p>
+        <p class="text-sm text-gray-600 dark:text-gray-300">
+          Fecha: {{ r.fecha_donacion|date:"d/m/Y" }}
+        </p>
+        <p class="text-sm text-gray-600 dark:text-gray-300">
+          Total donaciones: {{ r.total_donaciones }}
+        </p>
+        <a href="{% url 'reportes:donaciones_donante_fecha_pdf' r.donante_id r.fecha_donacion|date:'Y-m-d' %}"
+           target="_blank"
+           class="inline-block bg-blue-800 hover:bg-blue-950 text-white px-4 py-2 rounded-lg text-sm">
+           📋 Generar PDF
+        </a>
+      </div>
+      {% endfor %}
+    </div>
+
+  </div>
+</div>
+{% endblock %}

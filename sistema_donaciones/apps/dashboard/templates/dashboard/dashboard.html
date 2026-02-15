@@ -1,0 +1,76 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Dashboard{% endblock %}
+
+{% block content %}
+<div class="min-h-screen bg-linear-60 from-gray-900 via-gray-800 to-black p-6">
+   
+    <h2 class="text-3xl font-bold text-gray-100">Dashboard</h2>
+
+  <!-- tarjetas KPIs -->
+  <div class="flex flex-col md:flex-row gap-4 mb-8 mt-5">
+
+    <div class="flex-1 bg-orange-100 border-2 border-orange-700 rounded-xl p-4 text-center">
+      <p class="text-orange-950 text-2xl font-bold">Donaciones Recibidas</p>
+      <p class="text-4xl font-bold text-orange-950">{{ kpis.total_donaciones }}</p>
+    </div>
+
+    <div class="flex-1 bg-sky-100 border-2 border-sky-700 rounded-xl p-4 text-center">
+      <p class="text-blue-950 text-2xl font-bold">Inventario Dispponible</p>
+      <p class="text-4xl font-bold text-blue-950">{{ kpis.total_items_inventario }}</p>
+    </div>
+
+    <div class="flex-1 bg-pink-100 border-2 border-pink-700 rounded-xl p-4 text-center">
+      <p>🚚</p>
+        <p class="text-pink-950 text-2xl font-bold">Entregas Realizadas</p>
+      <p class="text-4xl font-bold text-pink-950">{{ kpis.entregas_realizadas }}</p>
+    </div>
+
+    <div class="flex-1 bg-slate-100 border-2 border-slate-700 rounded-xl p-4 text-center">
+      <p class="text-slate-950 text-2xl font-bold">Entregas Anuladas</p>
+      <p class="text-4xl font-bold text-slate-950">{{ kpis.entregas_anuladas }}</p>
+    </div>
+
+    <div class="flex-1 bg-amber-100 border-2 border-amber-700 rounded-xl p-4 text-center">
+      <p class="text-amber-950 text-2xl font-bold">Beneficiarios Registrados</p>
+      <p class="text-4xl font-bold text-amber-950">{{ kpis.total_beneficiarios }}</p>
+    </div>
+
+  </div>
+
+  <!--graficos del dashboard-->
+  <div class="flex flex-col md:flex-row gap-6">
+
+    <div class="flex-1 bg-gray-900 border-2 border-pink-700 rounded-xl p-6">
+      <h3 class="text-pink-200 font-semibold mb-4">Entregas por mes</h3>
+      <div id="grafico-entregas" class="w-full h-80"></div>
+    </div>
+
+    <div class="flex-1 bg-gray-900 border-2 border-pink-700 rounded-xl p-6">
+      <h3 class="text-pink-200 font-semibold mb-4">Entregas por tipo de beneficiario</h3>
+      <div id="grafico-categorias" class="w-full h-80"></div>
+    </div>
+
+  </div>
+
+</div>
+
+<!-- ================= DATA ================= -->
+{% endblock %}
+
+{% block js %}
+<script>
+  window.dashboardData = {
+    entregasLabels: {{ entregas_mes_labels|safe }},
+    entregasValues: {{ entregas_mes_values|safe }},
+    categoriasLabels: {{ categorias_labels|safe }},
+    categoriasValues: {{ categorias_values|safe }}
+  };
+</script>
+
+<script src="https://cdn.plot.ly/plotly-2.27.0.min.js"></script>
+<script src="{% static 'dashboard/js/dashboard.js' %}"></script>
+
+
+{% endblock %}
