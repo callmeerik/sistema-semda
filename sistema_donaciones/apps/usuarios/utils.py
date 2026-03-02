@@ -1,22 +1,25 @@
 import re
 
-def validar_password(password):
-    """Validación de la contraseña"""
-    
-    # mínimo 7 caracteres
+def validar_password(password: str):
+    """Valida fortaleza básica de contraseña"""
+
     if len(password) < 7:
         return False, "La contraseña debe tener al menos 7 caracteres."
-    
-    # al menos una mayúscula
+
+    if " " in password:
+        return False, "La contraseña no debe contener espacios."
+
     if not re.search(r"[A-Z]", password):
-        return False, "La contraseña debe incluir al menos una letra mayúscula."
-    
-    # al menos una minúscula
+        return False, "Debe incluir al menos una letra mayúscula."
+
     if not re.search(r"[a-z]", password):
-        return False, "La contraseña debe incluir al menos una letra minúscula."
-    
-    # al menos un número
+        return False, "Debe incluir al menos una letra minúscula."
+
     if not re.search(r"\d", password):
-        return False, "La contraseña debe incluir al menos un número."
-    
+        return False, "Debe incluir al menos un número."
+
+    # opcional pero recomendable
+    if not re.search(r"[!@#$%^&*(),.?\":{}|<>]", password):
+        return False, "Debe incluir al menos un símbolo."
+
     return True, ""

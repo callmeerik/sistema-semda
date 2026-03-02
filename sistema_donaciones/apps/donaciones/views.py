@@ -393,8 +393,8 @@ def index_entregas(request):
     if busqueda:
         entregas = entregas.filter(
             Q(item__descripcion__icontains=busqueda) |
-            Q(beneficiario__particualr__primer_nombre__icontains=busqueda) |
-            Q(beneficiario__particualr__primer_apellido__icontains=busqueda) |
+            Q(beneficiario__particular__primer_nombre__icontains=busqueda) |
+            Q(beneficiario__particular__primer_apellido__icontains=busqueda) |
             Q(beneficiario__institucional__nombre_institucion__icontains=busqueda)
         )
 

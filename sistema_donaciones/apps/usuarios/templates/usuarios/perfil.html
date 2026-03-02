@@ -20,55 +20,47 @@ Mi Perfil
             <h1 class="text-2xl font-semibold text-white">Mi Perfil</h1>
         </div>
 
-        <!-- FORM -->
         <form method="POST" class="space-y-6">
             {% csrf_token %}
 
             <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
 
-                <!-- PRIMER NOMBRE -->
                 <div>
                     <label class="block text-white font-medium mb-1">Primer nombre</label>
                     <input type="text" name="primer_nombre" value="{{ usuario.primer_nombre }}"
                            class="w-full bg-gray-900 text-white px-4 py-2 rounded-xl border border-gray-600 focus:ring-2 focus:ring-pink-500 focus:outline-none">
                 </div>
 
-                <!-- SEGUNDO NOMBRE -->
                 <div>
                     <label class="block text-white font-medium mb-1">Segundo nombre</label>
                     <input type="text" name="segundo_nombre" value="{{ usuario.segundo_nombre }}"
                            class="w-full bg-gray-900 text-white px-4 py-2 rounded-xl border border-gray-600 focus:ring-2 focus:ring-pink-500 focus:outline-none">
                 </div>
 
-                <!-- PRIMER APELLIDO -->
                 <div>
                     <label class="block text-white font-medium mb-1">Primer apellido</label>
                     <input type="text" name="primer_apellido" value="{{ usuario.primer_apellido }}"
                            class="w-full bg-gray-900 text-white px-4 py-2 rounded-xl border border-gray-600 focus:ring-2 focus:ring-pink-500 focus:outline-none">
                 </div>
 
-                <!-- SEGUNDO APELLIDO -->
                 <div>
                     <label class="block text-white font-medium mb-1">Segundo apellido</label>
                     <input type="text" name="segundo_apellido" value="{{ usuario.segundo_apellido }}"
                            class="w-full bg-gray-900 text-white px-4 py-2 rounded-xl border border-gray-600 focus:ring-2 focus:ring-pink-500 focus:outline-none">
                 </div>
 
-                <!-- CEDULA -->
                 <div>
                     <label class="block text-white font-medium mb-1">Cédula</label>
                     <input type="text" name="cedula" value="{{ usuario.cedula }}" readonly
                            class="w-full bg-gray-800 text-gray-400 px-4 py-2 rounded-xl border border-gray-700 cursor-not-allowed">
                 </div>
 
-                <!-- USUARIO -->
                 <div>
                     <label class="block text-white font-medium mb-1">Usuario</label>
                     <input type="text" value="{{ usuario.username }}" readonly
                            class="w-full bg-gray-800 text-gray-400 px-4 py-2 rounded-xl border border-gray-700 cursor-not-allowed">
                 </div>
 
-                <!-- EMAIL -->
                 <div>
                     <label class="block text-white font-medium mb-1">Correo electrónico</label>
                     <input type="email" name="email" value="{{ usuario.email }}"
@@ -78,7 +70,6 @@ Mi Perfil
                     {% endif %}
                 </div>
 
-                <!-- TELEFONO -->
                 <div>
                     <label class="block text-white font-medium mb-1">Teléfono</label>
                     <input type="text" name="telefono" value="{{ usuario.telefono }}"
@@ -87,7 +78,6 @@ Mi Perfil
 
             </div>
 
-            <!-- BOTONES -->
             <div class="flex justify-end gap-3 pt-6">
                 <a href="{% url 'dashboard:dashboard' %}"
                    class="px-6 py-2 rounded-xl bg-gray-600 text-white hover:bg-gray-700 transition">
@@ -101,7 +91,6 @@ Mi Perfil
             </div>
         </form>
 
-        <!-- CAMBIAR PASSWORD -->
         <div class="mt-8 pt-6 border-t border-gray-700">
             <a href="{% url 'usuarios:cambiar_password' %}"
                class="flex items-center gap-2 text-pink-500 hover:text-pink-400 font-medium">

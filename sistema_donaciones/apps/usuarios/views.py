@@ -4,6 +4,7 @@ from django.contrib.auth.hashers import make_password, check_password
 from django.contrib.auth import login, logout, authenticate
 from .utils import validar_password
 from .decorators import  role_required
+from config.utils import validar_cedula
 from django.db import IntegrityError
 from django.contrib.auth.decorators import login_required
 from django.db.models import Q
@@ -182,8 +183,8 @@ def crear_usuario(request):
 
         if not cedula:
             errores['cedula'] = 'La cédula es obligatoria'
-        elif len(cedula) != 10:
-            errores['cedula'] = 'La cédula debe tener 10 dígitos'
+        elif not validar_cedula(cedula):
+            errores['cedula'] = 'La cédula ingresada no es válida.'
 
         if not email:
             errores['email'] = 'El correo es obligatorio'
@@ -193,6 +194,10 @@ def crear_usuario(request):
 
         if not password:
             errores['password'] = 'La contraseña es obligatoria'
+        else:
+            valido, mensaje = validar_password(password)
+            if not valido:
+                errores['password'] = mensaje
 
         if password != password2:
             errores['password2'] = 'Las contraseñas no coinciden'

@@ -6,7 +6,7 @@ from django.db import transaction
 from ..usuarios.decorators import role_required
 from django.contrib.auth.decorators import login_required
 import re
-from ..donantes.utils import validar_cedula, validar_ruc
+from config.utils import validar_cedula, validar_ruc
 
 
 @login_required
@@ -123,7 +123,7 @@ def crear_beneficiario(request):
                             )
                             return redirect('beneficiarios:beneficiario_index')
 
-                    # INSTITUCIONAL
+                    # benef institucional
                     elif tipo == "INSTITUCIONAL":
                            
                         nombre_institucion=request.POST.get("nombre_institucion"),

@@ -17,13 +17,12 @@
     </div>
 
     <div class="flex-1 bg-sky-100 border-2 border-sky-700 rounded-xl p-4 text-center">
-      <p class="text-blue-950 text-2xl font-bold">Inventario Dispponible</p>
+      <p class="text-blue-950 text-2xl font-bold">Inventario Disponible</p>
       <p class="text-4xl font-bold text-blue-950">{{ kpis.total_items_inventario }}</p>
     </div>
 
     <div class="flex-1 bg-pink-100 border-2 border-pink-700 rounded-xl p-4 text-center">
-      <p>🚚</p>
-        <p class="text-pink-950 text-2xl font-bold">Entregas Realizadas</p>
+      <p class="text-pink-950 text-2xl font-bold">Entregas Realizadas</p>
       <p class="text-4xl font-bold text-pink-950">{{ kpis.entregas_realizadas }}</p>
     </div>
 
@@ -56,11 +55,11 @@
 
 </div>
 
-<!-- ================= DATA ================= -->
 {% endblock %}
 
 {% block js %}
 <script>
+    // obtener datos desde la vista
   window.dashboardData = {
     entregasLabels: {{ entregas_mes_labels|safe }},
     entregasValues: {{ entregas_mes_values|safe }},

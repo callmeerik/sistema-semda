@@ -168,7 +168,7 @@ LOGIN_REDIRECT_URL = '/'  # A dónde ir después de login exitoso
 LOGOUT_REDIRECT_URL = 'usuarios:login'  # A dónde ir después de logout
 
 # Opcional: tiempo de sesión
-SESSION_COOKIE_AGE = 3600  # 1 hora
+SESSION_COOKIE_AGE = 1800  # 30 minutos
 SESSION_EXPIRE_AT_BROWSER_CLOSE = True
 SESSION_SAVE_EVERY_REQUEST = True
 

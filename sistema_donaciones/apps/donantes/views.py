@@ -5,7 +5,7 @@ from django.db.models import Q
 from django.core.paginator import Paginator
 import re 
 from django.http import HttpResponseNotAllowed
-from .utils import validar_cedula, validar_ruc
+from config.utils import validar_cedula, validar_ruc
 from django.contrib.auth.decorators import login_required
 
 
@@ -110,7 +110,7 @@ def crear_donante(request):
                     errores["apellido"] = "El apellido es obligatorio."
 
                 if not validar_cedula(cedula):
-                    errores["cedula"] = "La cédula debe tener exactamente 10 dígitos."
+                    errores["cedula"] = "La cédula ingresada no es válida."
                 elif DonanteNatural.objects.filter(cedula=cedula).exists():
                     errores["cedula"] = "Ya existe un donante con esta cédula."
                 
@@ -136,7 +136,7 @@ def crear_donante(request):
                     errores["razon_social"] = "La razón social es obligatoria."
 
                 if not validar_ruc(ruc):
-                    errores["ruc"] = "El RUC debe tener 13 dígitos y terminar en 001."
+                    errores["ruc"] = "El RUC ingresado no es válido."
                 elif DonanteJuridico.objects.filter(ruc=ruc).exists():
                     errores["ruc"] = "Ya existe un donante con este RUC."
 
