@@ -3,6 +3,7 @@ from django.db.models import Q
 from django.core.paginator import Paginator
 from .models import Beneficiario, BeneficiarioParticular, BeneficiarioInstitucional
 from django.db import transaction
+from django.contrib import messages
 from ..usuarios.decorators import role_required
 from django.contrib.auth.decorators import login_required
 import re
@@ -180,7 +181,11 @@ def editar_beneficiario(request, id):
     )
 
     errores = {}
-
+    if request.user.rol == "ASISTENTE" and beneficiario.registrado_por != request.user:
+        messages.error(request,
+                        'No puedes editar este beneficiario',
+                        extra_tags = 'error_edicion_beneficiario')
+        return redirect("beneficiarios:beneficiario_index")       
     if request.method == "POST":
 
         beneficiario.telefono = request.POST.get("telefono")
@@ -223,7 +228,7 @@ def eliminar_beneficiario(request, id):
 
     beneficiario = get_object_or_404(Beneficiario, pk=id)
 
-    beneficiario.is_active = False
+    beneficiario.is_active = not beneficiario.is_active
     beneficiario.save()
 
     return redirect("beneficiarios:beneficiario_index")

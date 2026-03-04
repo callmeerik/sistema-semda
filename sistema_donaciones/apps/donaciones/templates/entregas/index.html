@@ -27,7 +27,7 @@
           Buscar
         </button>
         {% if busqueda %}
-            <a href="{% url 'beneficiarios:entregas' %}"
+            <a href="{% url 'donaciones:entregas' %}"
                 class="bg-gray-700 hover:bg-gray-600 px-5 rounded-lg flex items-center">
                 Limpiar
             </a>
@@ -90,7 +90,7 @@
                 {% if e.beneficiario.tipo == "INSTITUCIONAL" %}
                     {{ e.beneficiario.institucional.nombre_institucion }} 
                 {% else %}
-                    {{ e.benficiario.particular.primer_nombre }}
+                    {{ e.beneficiario.particular.primer_nombre }} {{e.beneficiario.particular.primer_apellido}}
                 {% endif %}
             </td>
 

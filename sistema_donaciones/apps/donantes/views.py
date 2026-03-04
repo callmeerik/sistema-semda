@@ -3,6 +3,7 @@ from .models import Donante, DonanteJuridico, DonanteNatural
 from ..usuarios.decorators import role_required
 from django.db.models import Q
 from django.core.paginator import Paginator
+from django.contrib import messages
 import re 
 from django.http import HttpResponseNotAllowed
 from config.utils import validar_cedula, validar_ruc
@@ -45,7 +46,7 @@ def index(request):
             filtros |= Q(juridico__ruc__icontains=busqueda_limpia)
     donantes = donantes.filter(filtros).distinct()
     
-    paginator = Paginator(donantes, 8)  # 8 por página
+    paginator = Paginator(donantes, 4)  # 8 por página
     page_number = request.GET.get('page')
     page_obj = paginator.get_page(page_number)
 
@@ -108,7 +109,10 @@ def crear_donante(request):
 
                 if not apellido:
                     errores["apellido"] = "El apellido es obligatorio."
-
+                print(f"Cedula: {cedula}")
+                print(cedula.isdigit())
+                print(f"tipo: {type(cedula)}")
+                print(validar_cedula(cedula))
                 if not validar_cedula(cedula):
                     errores["cedula"] = "La cédula ingresada no es válida."
                 elif DonanteNatural.objects.filter(cedula=cedula).exists():
@@ -182,7 +186,7 @@ def detalle_donante(request, id):
 
 
 @login_required
-@role_required('ADMINISTRADOR', 'ASISTENTE')
+@role_required('ADMINISTRADOR')
 def toggle_estado_donante(request, id):
     if request.method == 'POST':
         donante = get_object_or_404(Donante, id=id)
@@ -198,6 +202,12 @@ def toggle_estado_donante(request, id):
 def editar_donante(request, id):
     donante = get_object_or_404(Donante, id=id)
     errores = {}
+
+    if request.user.rol == "ASISTENTE" and donante.registrado_por != request.user:
+        messages.error(request,
+                        'No puedes editar este donante',
+                        extra_tags = 'error_edicion_donante')
+        return redirect("donantes:index")        
 
     if request.method == 'POST':
 

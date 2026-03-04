@@ -108,7 +108,11 @@ def editar_donacion(request, id):
     donantes = Donante.objects.filter(is_active=True)
 
     errores = {}
-
+    if request.user.rol == "ASISTENTE" and donacion.registrado_por != request.user:
+        messages.error(request,
+                        'No puedes editar este donante',
+                        extra_tags = 'error_edicion_donacion')
+        return redirect("donaciones:index")       
     if request.method == 'POST':
         data = request.POST
         donante_id = data.get('donante')
@@ -235,7 +239,7 @@ def editar_item_donacion(request, id):
     
     if not item.es_editable:
         messages.error(request,
-                        'No es posible editar, ya hay items entregados',
+                        'No puedes editar este ítem, ya está entregado en su totalidad',
                         extra_tags = 'error_edicion_item')
         return redirect("donaciones:detalle", item.donacion.id)
 
@@ -432,7 +436,7 @@ def entregar_item(request, id):
         item.save()
         return redirect('donaciones:inventario')
 
-    # 🔹 Beneficiarios institucionales
+    # Beneficiarios institucionales
     beneficiarios_institucionales = (
         Beneficiario.objects
         .filter(

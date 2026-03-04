@@ -83,7 +83,13 @@
                 Resultados: <span class="text-gray-200 font-semibold">{{ total }}</span>
             </p>
         </form>
-
+        {% for message in messages %}
+            {% if "error_edicion_beneficiario" in message.tags %}
+                <div class="p-3 rounded mb-3 bg-yellow-400/60 border-2 border-yellow-900 text-yellow-950 font-bold">
+                    <p>{{ message }}</p>
+                </div>
+            {% endif %}
+        {% endfor %}
         <div class="hidden md:block bg-gray-900/90 border border-gray-800 rounded-2xl p-6">
             <table class="w-full border-separate border-spacing-y-3">
                 <thead>
@@ -145,7 +151,7 @@
                                     class="px-3 py-2 bg-violet-700 hover:bg-violet-800 text-white rounded-lg text-sm">
                                     Editar
                                 </a>
-
+                                {% if request.user.rol == "ADMINISTRADOR" %}
                                 <form method="post"
                                     action="{% url 'beneficiarios:beneficiario_cambiar_estado' beneficiario.id %}">
                                     {% csrf_token %}
@@ -159,6 +165,7 @@
                                         {% if beneficiario.is_active %}Desactivar{% else %}Activar{% endif %}
                                     </button>
                                 </form>
+                                {% endif %}
                             </div>
                         </td>
 
@@ -224,7 +231,7 @@
                         class="flex-1 px-3 py-2 bg-violet-500 hover:bg-violet-600 text-white rounded-lg text-sm text-center">
                         Editar
                     </a>
-
+                    {% if request.user.rol == "ADMINISTRADOR" %}
                     <form method="post" action="{% url 'beneficiarios:beneficiario_cambiar_estado' beneficiario.id %}"
                         class="flex-1">
                         {% csrf_token %}
@@ -238,6 +245,7 @@
                             {% if beneficiario.is_active %}Desactivar{% else %}Activar{% endif %}
                         </button>
                     </form>
+                    {% endif %}
                 </div>
 
             </div>
