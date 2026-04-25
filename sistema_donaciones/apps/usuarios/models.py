@@ -1,6 +1,7 @@
 from django.db import models
 from django.contrib.auth.models import AbstractBaseUser, BaseUserManager, PermissionsMixin
 from django.utils import timezone
+from fernet_fields import EncryptedCharField, EncryptedTextField
 
 # Modelo Usuario Administrador personalizado
 class UsuarioManager(BaseUserManager):
@@ -30,9 +31,9 @@ class Usuario(AbstractBaseUser, PermissionsMixin):
     segundo_nombre = models.CharField(max_length=30, blank=True, null=True)
     primer_apellido = models.CharField(max_length=30, blank=False, null=False)
     segundo_apellido = models.CharField(max_length=30, blank=True, null=True)
-    cedula = models.CharField(max_length=10, unique=True)
-    email = models.EmailField(max_length=100, blank=False, null=False, unique=True)
-    telefono = models.CharField(max_length=20, blank=False, null=False)
+    cedula = EncryptedCharField(max_length=10, unique=True, blank=True, null=True)
+    email = EncryptedCharField(max_length=100, blank=False, null=False, unique=True)
+    telefono = EncryptedCharField(max_length=20, blank=False, null=False)
     rol = models.CharField(
         max_length=20, 
         choices=[('ADMINISTRADOR','ADMINISTRADOR'), 

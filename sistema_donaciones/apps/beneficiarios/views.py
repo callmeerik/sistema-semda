@@ -27,8 +27,7 @@ def lista_beneficiarios(request):
 
     filtros = Q()
     if busqueda:
-        filtros = Q(email__icontains=busqueda) |\
-        Q(particular__primer_nombre__icontains=busqueda) |\
+        filtros = Q(particular__primer_nombre__icontains=busqueda) |\
         Q(particular__primer_apellido__icontains=busqueda) |\
         Q(institucional__nombre_institucion__icontains=busqueda)
             

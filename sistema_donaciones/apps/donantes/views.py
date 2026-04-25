@@ -31,19 +31,14 @@ def index(request):
     elif estado == 'INACTIVO':
         donantes = donantes.filter(is_active=False)
     
-    # para busqueda de cedula o ruc
-    busqueda_limpia = re.sub(r'\D', '', busqueda)
+    
 
     filtros = Q()
     if busqueda:
-        filtros = Q(email__icontains=busqueda) |\
-        Q(natural__nombre__icontains=busqueda) |\
+        filtros = Q(natural__nombre__icontains=busqueda) |\
         Q(natural__apellido__icontains=busqueda) |\
         Q(juridico__razon_social__icontains=busqueda)
    
-        if busqueda_limpia:
-            filtros |= Q(natural__cedula__icontains=busqueda_limpia)
-            filtros |= Q(juridico__ruc__icontains=busqueda_limpia)
     donantes = donantes.filter(filtros).distinct()
     
     paginator = Paginator(donantes, 4)  # 8 por página

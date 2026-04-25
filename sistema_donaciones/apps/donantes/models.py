@@ -1,5 +1,6 @@
 from django.db import models
 from ..usuarios.models import Usuario
+from fernet_fields import EncryptedCharField, EncryptedTextField
 
 class Donante(models.Model):
     TIPO_DONANTE = [
@@ -11,9 +12,9 @@ class Donante(models.Model):
         max_length= 10,
         choices= TIPO_DONANTE
     )
-    email = models.EmailField(max_length=120, blank=False, null=False)
-    telefono = models.CharField(max_length=15, blank=True, null=True)
-    direccion = models.TextField(blank=False, null=False)
+    email = EncryptedCharField(max_length=120, blank=False, null=False)
+    telefono = EncryptedCharField(max_length=15, blank=True, null=True)
+    direccion = EncryptedTextField(blank=False, null=False)
     fecha_registro = models.DateTimeField(auto_now_add=True)
     registrado_por = models.ForeignKey(
         Usuario,
@@ -47,7 +48,7 @@ class DonanteNatural(models.Model):
     )
     nombre = models.CharField(max_length=30, blank=False, null=False)
     apellido = models.CharField(max_length=30, blank=False, null=False)
-    cedula = models.CharField(max_length=10, blank=False, null=False, unique=True)
+    cedula = EncryptedCharField(max_length=10, blank=False, null=False, unique=True)
 
     class Meta:
         db_table = 'donantes_naturals'
@@ -64,7 +65,7 @@ class DonanteJuridico(models.Model):
         related_name= 'juridico'
     )
     razon_social = models.CharField(max_length=200, blank=False, null=False)
-    ruc = models.CharField(max_length=13, blank=False, null=False, unique=True)
+    ruc = EncryptedCharField(max_length=13, blank=False, null=False, unique=True)
     nombre_representante = models.CharField(max_length=30, blank=False, null=False )
     apellido_representante = models.CharField(max_length=30, blank=False, null=False)
     cargo_representante = models.CharField(max_length=100, blank=False, null=False)

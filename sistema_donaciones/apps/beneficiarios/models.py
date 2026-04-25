@@ -1,5 +1,6 @@
 from django.db import models
 from ..usuarios.models import Usuario
+from fernet_fields import EncryptedCharField, EncryptedTextField
 
 class Beneficiario(models.Model):
 
@@ -11,9 +12,9 @@ class Beneficiario(models.Model):
     tipo = models.CharField(max_length=20, choices=TIPO_BENEFICIARIO)
 
     # Datos generales
-    telefono = models.CharField(max_length=15, blank=True, null=True)
-    direccion = models.TextField(blank=True, null=True)
-    email = models.CharField(max_length=125, blank=True, null=True)
+    telefono = EncryptedCharField(max_length=15, blank=True, null=True)
+    direccion = EncryptedTextField(blank=True, null=True)
+    email = EncryptedCharField(max_length=125, blank=True, null=True)
     is_active = models.BooleanField(default=True)
 
     fecha_registro = models.DateTimeField(auto_now_add=True)
@@ -39,7 +40,7 @@ class BeneficiarioParticular(models.Model):
     segundo_nombre = models.CharField(max_length=30)
     primer_apellido = models.CharField(max_length=30, blank=False, null=False)
     segundo_apellido = models.CharField(max_length=30)
-    cedula = models.CharField(max_length=10, unique=True)
+    cedula = EncryptedCharField(max_length=10, unique=True)
     edad = models.PositiveIntegerField(blank=True, null=True)
     sexo = models.CharField(
             max_length=10,
@@ -74,7 +75,7 @@ class BeneficiarioInstitucional(models.Model):
             ('OTRO', 'Otro')
         ]
     )
-    ruc = models.CharField(max_length=13, blank=False, null=False, unique=True)
+    ruc = EncryptedCharField(max_length=13, blank=False, null=False, unique=True)
     nombre_representante = models.CharField(max_length=30, blank=False, null=False )
     apellido_representante = models.CharField(max_length=30, blank=False, null=False)
     class Meta:

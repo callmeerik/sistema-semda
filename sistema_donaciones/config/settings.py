@@ -45,7 +45,7 @@ INSTALLED_APPS = [
     'tailwind',
     'theme',
     # NEW APPS
-    'apps.usuarios',
+    'apps.usuarios.apps.UsuariosConfig',
     'apps.dashboard',
     'apps.donantes',
     'apps.donaciones',
@@ -182,3 +182,7 @@ EMAIL_USE_TLS = os.getenv('EMAIL_USE_TLS', 'False') == 'True'
 EMAIL_HOST_USER = os.getenv('EMAIL_HOST_USER')
 EMAIL_HOST_PASSWORD = os.getenv('EMAIL_HOST_PASSWORD')
 DEFAULT_FROM_EMAIL = os.getenv('DEFAULT_FROM_EMAIL')
+
+
+# FERNET ENCRIPTACION
+FERNET_KEY = os.getenv('FERNET_KEY')
