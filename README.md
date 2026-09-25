@@ -29,7 +29,7 @@ Sistema web desarrollado para la gestión de donaciones no monetarias o en espec
 
 ## Módulos del sistema
 
-<img src="screenshots/donaciones.png">
+<img src="./sistema_donaciones//screenshots/donaciones.png">
 
 | Módulo | Descripción |
 |---|---|
@@ -64,7 +64,7 @@ Puede gestionar las operaciones habituales de la fundación:
 
 ## Dashboard
 
-<img src="screenshots/dashboard.png" alt="Imagen del dashboard del sistema">
+<img src="./sistema_donaciones//screenshots/dashboard.png" alt="Imagen del dashboard del sistema">
 
 El dashboard presenta una visión general de la actividad de la fundación mediante los siguientes indicadores:
 
@@ -91,7 +91,7 @@ Incluye gráficos de entregas realizadas por mes y distribución porcentual de l
 
 ## Reportes
 
-<img src="screenshots/reportes.png" alt="Screenshots de la pantalla de reportes">
+<img src="./sistema_donaciones//screenshots/reportes.png" alt="Screenshots de la pantalla de reportes">
 
 El sistema permite generar y descargar reportes en PDF. Los tipos de reportes disponibles son:
 
